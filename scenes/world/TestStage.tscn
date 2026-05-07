@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://hvqoegxdhu34" path="res://scripts/data/zone4_loot.tres" id="7_xh3pg"]
 [ext_resource type="Resource" uid="uid://c4vcae50h26mr" path="res://scripts/data/zone5_loot.tres" id="8_jltbn"]
 [ext_resource type="PackedScene" uid="uid://cfv8x3akflcs3" path="res://scenes/world/Base.tscn" id="10_7vje3"]
+[ext_resource type="Texture2D" uid="uid://3ou32hpic26j" path="res://assets/background/starry-background.jpg" id="11_mkkyj"]
 
 [node name="World" type="Node2D" unique_id=1799235330]
 script = ExtResource("1_5cotu")
@@ -19,3 +20,15 @@ zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtRes
 position = Vector2(0, 23)
 
 [node name="Base" parent="." unique_id=1931406139 instance=ExtResource("10_7vje3")]
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=1301202719]
+z_index = -1
+scale = Vector2(0.12799676, 0.12799676)
+scroll_scale = Vector2(0.015, 0.015)
+repeat_size = Vector2(7001, 4001)
+repeat_times = 37
+
+[node name="TextureRect" type="TextureRect" parent="Parallax2D" unique_id=519096962]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("11_mkkyj")

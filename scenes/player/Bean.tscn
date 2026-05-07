@@ -2,10 +2,97 @@
 
 [ext_resource type="Script" uid="uid://ceyht1abakdap" path="res://scenes/player/Bean.gd" id="1_d60m5"]
 [ext_resource type="Script" uid="uid://obiu3t4k7pqt" path="res://scenes/player/Boost.gd" id="2_k7glu"]
-[ext_resource type="Texture2D" uid="uid://c0std161yyxsv" path="res://assets/dummyplayer.png" id="2_vhueg"]
+[ext_resource type="Texture2D" uid="uid://bvu1r7p08bfnq" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0000.png" id="2_lhlkm"]
+[ext_resource type="Texture2D" uid="uid://c137xa4lp7kt5" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0001.png" id="3_6bqdt"]
 [ext_resource type="Script" uid="uid://by8q74gv5mjrm" path="res://scripts/systems/Inventory.gd" id="3_tn1bn"]
+[ext_resource type="Texture2D" uid="uid://c50ps22lauuxj" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0002.png" id="4_5v58o"]
+[ext_resource type="Texture2D" uid="uid://2486wp1lk5t2" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0003.png" id="5_4bomx"]
+[ext_resource type="Texture2D" uid="uid://6sd1nesa17t7" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_000.png" id="6_eqv0f"]
+[ext_resource type="Texture2D" uid="uid://7saqp1lyop5j" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0004.png" id="6_wjlgk"]
+[ext_resource type="Texture2D" uid="uid://c38fstbayxcgj" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_001.png" id="7_g435h"]
+[ext_resource type="Texture2D" uid="uid://idrtub2ux8hf" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0005.png" id="7_wknf3"]
+[ext_resource type="Texture2D" uid="uid://c5i21bmwrpsdm" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0006.png" id="8_h6acx"]
+[ext_resource type="Texture2D" uid="uid://cj37fhefa1ww4" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_002.png" id="8_wd4iw"]
+[ext_resource type="Texture2D" uid="uid://dxb54oit0vl0l" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_003.png" id="9_0ecuh"]
+[ext_resource type="Texture2D" uid="uid://hbcyauoosii5" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0007.png" id="9_aw6e4"]
+[ext_resource type="Texture2D" uid="uid://da81r7b5wy7xe" path="res://assets/astronaut/animations/Breathing_Idle-bb74b1ea/east/frame_0008.png" id="10_62oyt"]
+[ext_resource type="Texture2D" uid="uid://bheueggdapsgp" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_004.png" id="10_tapmi"]
+[ext_resource type="Texture2D" uid="uid://dhu4pie45pshp" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_005.png" id="11_lhlkm"]
+[ext_resource type="Texture2D" uid="uid://dggheliim327w" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_006.png" id="12_6bqdt"]
+[ext_resource type="Texture2D" uid="uid://j6pf0uo51hrc" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_007.png" id="13_5v58o"]
+[ext_resource type="Texture2D" uid="uid://cyr8fd0jg8o4y" path="res://assets/astronaut/animations/The_astronaut_drifts_in_a_weightless_void_maintain-0aebdceb/east/frame_008.png" id="14_4bomx"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rmnoi"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_wjlgk"]
+animations = [{
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_lhlkm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_6bqdt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_5v58o")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4bomx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_wjlgk")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_wknf3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_h6acx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_aw6e4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_62oyt")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.5,
+"texture": ExtResource("6_eqv0f")
+}, {
+"duration": 1.5,
+"texture": ExtResource("7_g435h")
+}, {
+"duration": 1.5,
+"texture": ExtResource("8_wd4iw")
+}, {
+"duration": 1.5,
+"texture": ExtResource("9_0ecuh")
+}, {
+"duration": 1.5,
+"texture": ExtResource("10_tapmi")
+}, {
+"duration": 1.5,
+"texture": ExtResource("11_lhlkm")
+}, {
+"duration": 1.5,
+"texture": ExtResource("12_6bqdt")
+}, {
+"duration": 1.5,
+"texture": ExtResource("13_5v58o")
+}, {
+"duration": 1.5,
+"texture": ExtResource("14_4bomx")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 5.0
+}]
 
 [sub_resource type="Gradient" id="Gradient_tn1bn"]
 offsets = PackedFloat32Array(0, 0.23055555, 0.48055556, 0.74722224, 1)
@@ -26,18 +113,28 @@ angular_velocity_max = -1.6093254e-05
 gravity = Vector3(-98, 0, 0)
 color_ramp = SubResource("GradientTexture1D_kckdp")
 
+[sub_resource type="Animation" id="Animation_c64f7"]
+resource_name = "idle"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_dvu4r"]
+_data = {
+&"idle": SubResource("Animation_c64f7")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rmnoi"]
+radius = 16.0
+height = 78.0
+
 [node name="Bean" type="CharacterBody2D" unique_id=1962436338]
 script = ExtResource("1_d60m5")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220253312]
-shape = SubResource("CapsuleShape2D_rmnoi")
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=211869261]
-position = Vector2(0.7499984, 0)
-scale = Vector2(1.7812499, 1.8749996)
-texture = ExtResource("2_vhueg")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=142194069]
+sprite_frames = SubResource("SpriteFrames_wjlgk")
+animation = &"moving"
+frame_progress = 0.79140186
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1692957618]
+emitting = false
 amount = 100
 lifetime = 0.4
 speed_scale = 0.4
@@ -45,9 +142,23 @@ randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_k7glu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1054276952]
+process_callback = 0
+position_smoothing_enabled = true
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.1
+drag_top_margin = 0.1
+drag_right_margin = 0.1
 
 [node name="Boost" type="Node2D" parent="." unique_id=1375117675]
 script = ExtResource("2_k7glu")
 
 [node name="Inventory" type="Node2D" parent="." unique_id=764309634]
 script = ExtResource("3_tn1bn")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1054671791]
+libraries/ = SubResource("AnimationLibrary_dvu4r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220253312]
+position = Vector2(-2, 0)
+shape = SubResource("CapsuleShape2D_rmnoi")

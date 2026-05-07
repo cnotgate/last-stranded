@@ -88,9 +88,17 @@ func handle_movement(delta):
 	# Sliding (low grav feeling)
 	velocity *= sliding
 
-	# Rotation
-	if velocity.length() > 5:
-		rotation = velocity.angle()
+	# Character orientation and animation
+	var sprite = $AnimatedSprite2D
+	if velocity.x > 5:
+		sprite.flip_h = false
+	elif velocity.x < -5:
+		sprite.flip_h = true
+		
+	if velocity.length() > 10:
+		sprite.play("moving")
+	else:
+		sprite.play("idle")
 
 # Emit particles using godots particle system a great system for making particles
 func handle_effects():
@@ -124,7 +132,8 @@ func spawn_dropped_battery(battery):
 	var obj = scene.instantiate()
 	obj.battery = battery
 	
-	var drop_offset = Vector2(50, 0).rotated(rotation)
+	var drop_dir = -1 if $AnimatedSprite2D.flip_h else 1
+	var drop_offset = Vector2(50 * drop_dir, 0)
 	obj.position = position + drop_offset
 	
 	get_parent().add_child(obj)
@@ -150,7 +159,8 @@ func spawn_dropped_item(data):
 	var obj = scene.instantiate()
 	obj.data = data
 	
-	var drop_offset = Vector2(50, 0).rotated(rotation)
+	var drop_dir = -1 if $AnimatedSprite2D.flip_h else 1
+	var drop_offset = Vector2(50 * drop_dir, 0)
 	obj.position = position + drop_offset
 	
 	get_parent().add_child(obj)
