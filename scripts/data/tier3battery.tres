@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BatteryTierData" format=3 uid="uid://yqdx2et0ikbr"]
+
+[ext_resource type="Script" uid="uid://bifkandhvii0y" path="res://scripts/data/BatteryTierData.gd" id="1_na7sy"]
+
+[resource]
+script = ExtResource("1_na7sy")
+tier = 3
+max_energy = 300.0
+min_boost = 2.4
+max_boost = 3.2
+min_drain = 12.0
+max_drain = 25.0
+metadata/_custom_type_script = "uid://bifkandhvii0y"

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://cofuoyg1kuwtx"]
+
+[ext_resource type="Script" uid="uid://bae1762dmxv6s" path="res://scripts/data/ResourceData.gd" id="1_cmagi"]
+
+[resource]
+script = ExtResource("1_cmagi")
+item_name = "battery mat"
+usage_type = "battery"
+metadata/_custom_type_script = "uid://bae1762dmxv6s"

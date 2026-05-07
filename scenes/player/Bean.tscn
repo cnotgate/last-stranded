@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://cnja6ag0spi5t"]
+
+[ext_resource type="Script" uid="uid://ceyht1abakdap" path="res://scenes/player/Bean.gd" id="1_d60m5"]
+[ext_resource type="Script" uid="uid://obiu3t4k7pqt" path="res://scenes/player/Boost.gd" id="2_k7glu"]
+[ext_resource type="Texture2D" uid="uid://c0std161yyxsv" path="res://assets/dummyplayer.png" id="2_vhueg"]
+[ext_resource type="Script" uid="uid://by8q74gv5mjrm" path="res://scripts/systems/Inventory.gd" id="3_tn1bn"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rmnoi"]
+
+[sub_resource type="Gradient" id="Gradient_tn1bn"]
+offsets = PackedFloat32Array(0, 0.23055555, 0.48055556, 0.74722224, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.76598245, 0.47344333, 0.16974995, 1, 0.8365353, 0.72538704, 0.32205084, 1, 0.93648994, 0.8966435, 0.44238064, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_kckdp"]
+gradient = SubResource("Gradient_tn1bn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_k7glu"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(-10, 0, 0)
+emission_shape = 1
+emission_sphere_radius = 10.0
+direction = Vector3(0, -1, 0)
+spread = 0.0
+angular_velocity_min = -1.6093254e-05
+angular_velocity_max = -1.6093254e-05
+gravity = Vector3(-98, 0, 0)
+color_ramp = SubResource("GradientTexture1D_kckdp")
+
+[node name="Bean" type="CharacterBody2D" unique_id=1962436338]
+script = ExtResource("1_d60m5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220253312]
+shape = SubResource("CapsuleShape2D_rmnoi")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=211869261]
+position = Vector2(0.7499984, 0)
+scale = Vector2(1.7812499, 1.8749996)
+texture = ExtResource("2_vhueg")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1692957618]
+amount = 100
+lifetime = 0.4
+speed_scale = 0.4
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_k7glu")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1054276952]
+
+[node name="Boost" type="Node2D" parent="." unique_id=1375117675]
+script = ExtResource("2_k7glu")
+
+[node name="Inventory" type="Node2D" parent="." unique_id=764309634]
+script = ExtResource("3_tn1bn")

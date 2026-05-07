@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://bmes41qr8r1or"]
+
+[ext_resource type="Script" uid="uid://bae1762dmxv6s" path="res://scripts/data/ResourceData.gd" id="1_3d2u5"]
+
+[resource]
+script = ExtResource("1_3d2u5")
+item_name = "hybrid mat"
+usage_type = "hybrid"
+metadata/_custom_type_script = "uid://bae1762dmxv6s"

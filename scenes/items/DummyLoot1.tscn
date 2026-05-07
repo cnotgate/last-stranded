@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://ckylm2d8wqi82"]
+
+[ext_resource type="Script" uid="uid://cfg2ffx4f6i8h" path="res://scenes/items/ResourceItem.gd" id="1_rduwq"]
+[ext_resource type="Texture2D" uid="uid://ca0stj1ftyn40" path="res://assets/dummyitem1.png" id="2_d541i"]
+[ext_resource type="Resource" uid="uid://dlx0yhvekbmal" path="res://scripts/data/dummyloot1.tres" id="2_wlcns"]
+
+[node name="DummyLoot1" type="Node2D" unique_id=375624696]
+script = ExtResource("1_rduwq")
+data = ExtResource("2_wlcns")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=708842627]
+scale = Vector2(2, 2)
+texture = ExtResource("2_d541i")

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ResourceData" format=3 uid="uid://dlx0yhvekbmal"]
+
+[ext_resource type="Script" uid="uid://bae1762dmxv6s" path="res://scripts/data/ResourceData.gd" id="1_cfo6b"]
+
+[resource]
+script = ExtResource("1_cfo6b")
+item_name = "oxygen mat"
+usage_type = "oxygen"
+metadata/_custom_type_script = "uid://bae1762dmxv6s"
