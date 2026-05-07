@@ -194,14 +194,18 @@ func handle_item():
 			# Debug helper
 			$Inventory.print_inventory()
 	if Input.is_action_just_pressed("drop_item"):
-		var obj = inventory.remove_from_slot(selected_slot)
+		if inventory == null:
+			print("Error: Inventory node not found!")
+			return
+			
+		var item = inventory.remove_from_slot(selected_slot)
 		
-		if obj == null:
+		if item == null:
 			print("Slot empty!")
 			return
 		
 		# Battery slot
 		if selected_slot == 0:
-			spawn_dropped_battery(obj)
+			spawn_dropped_battery(item)
 		else:
-			spawn_dropped_item(obj)
+			spawn_dropped_item(item)

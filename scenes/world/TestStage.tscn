@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d0e35eing7gwk"]
 
-[ext_resource type="PackedScene" uid="uid://cnja6ag0spi5t" path="res://scenes/player/Bean.tscn" id="1_3l1dp"]
+[ext_resource type="PackedScene" uid="uid://cnja6ag0spi5t" path="res://scenes/player/Player.tscn" id="1_3l1dp"]
 [ext_resource type="Script" uid="uid://b8wni2t1w3g2w" path="res://scenes/world/World.gd" id="1_5cotu"]
 [ext_resource type="Script" uid="uid://decr01p12np2h" path="res://scripts/data/LootTable.gd" id="2_n8dlr"]
 [ext_resource type="Resource" uid="uid://r4xau8ma7qi6" path="res://scripts/data/zone0_loot.tres" id="3_7vje3"]
@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://bi5l0rsga1nps" path="res://scripts/data/zone3_loot.tres" id="6_xmr2h"]
 [ext_resource type="Resource" uid="uid://hvqoegxdhu34" path="res://scripts/data/zone4_loot.tres" id="7_xh3pg"]
 [ext_resource type="Resource" uid="uid://c4vcae50h26mr" path="res://scripts/data/zone5_loot.tres" id="8_jltbn"]
+[ext_resource type="PackedScene" uid="uid://cox1p4cndbju1" path="res://scenes/objects/SpaceStation.tscn" id="9_xm1px"]
 [ext_resource type="PackedScene" uid="uid://cfv8x3akflcs3" path="res://scenes/world/Base.tscn" id="10_7vje3"]
 [ext_resource type="Texture2D" uid="uid://3ou32hpic26j" path="res://assets/background/starry-background.jpg" id="11_mkkyj"]
 
@@ -16,7 +17,12 @@
 script = ExtResource("1_5cotu")
 zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtResource("4_mkkyj"), ExtResource("5_xm1px"), ExtResource("6_xmr2h"), ExtResource("7_xh3pg"), ExtResource("8_jltbn")])
 
-[node name="Bean" parent="." unique_id=1962436338 instance=ExtResource("1_3l1dp")]
+[node name="SpaceStation" parent="." unique_id=193361841 instance=ExtResource("9_xm1px")]
+position = Vector2(-338.00003, -367)
+rotation = -0.42010105
+scale = Vector2(6.8000007, 6.8000007)
+
+[node name="Player" parent="." unique_id=1962436338 instance=ExtResource("1_3l1dp")]
 position = Vector2(0, 23)
 
 [node name="Base" parent="." unique_id=1931406139 instance=ExtResource("10_7vje3")]
