@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Last Stranded GP"
-run/main_scene="uid://d0e35eing7gwk"
+run/main_scene="uid://va6xsxah2lsr"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
