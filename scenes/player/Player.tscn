@@ -126,6 +126,7 @@ radius = 16.0
 height = 78.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1962436338]
+z_index = 1
 script = ExtResource("1_d60m5")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=142194069]
