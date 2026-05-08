@@ -14,8 +14,16 @@ var selected_slot := 0
 
 var debug_timer := 0.0
 var node_to_tether_from: OxygenRelay = null
+var interact_hold_timer: float = 0.0
+
+@export var max_oxygen: float = 100.0
+var current_oxygen: float = 100.0
+var nearest_relay: OxygenRelay = null
+var nearest_relay_distance: float = 0.0
 
 func _ready():
+	add_to_group("player")
+	
 	# Test battery input
 	var tier1 = preload("res://scripts/data/tier1battery.tres")
 	
@@ -34,7 +42,8 @@ func _physics_process(delta):
 	handle_effects()
 	find_nearest_interactable()
 	handle_item()
-	check_oxygen_relay_nearby()
+	handle_interact_hold(delta)
+	check_oxygen_relay_nearby(delta)
 	
 	# I hate debugging
 	debug_timer += delta
@@ -62,7 +71,9 @@ func _physics_process(delta):
 func _draw():
 	if node_to_tether_from != null:
 		# Draw a semi-transparent line from the player to the relay they grabbed the tether from
-		draw_line(Vector2.ZERO, to_local(node_to_tether_from.global_position), Color(1.0, 1.0, 1.0, 1.0), 3.0)
+		var c = node_to_tether_from.tether_color
+		var w = node_to_tether_from.tether_width
+		draw_line(Vector2.ZERO, to_local(node_to_tether_from.global_position), Color(c.r, c.g, c.b, 1), w)
 
 # Main movement
 func handle_movement(delta):
@@ -116,6 +127,24 @@ func handle_effects():
 	thruster.emitting = boost_system.is_boosting()
 
 # Interact system
+func handle_interact_hold(delta):
+	if Input.is_action_pressed("interact"):
+		if nearby_object != null and nearby_object is OxygenRelay:
+			interact_hold_timer += delta
+			if interact_hold_timer >= 3.0:
+				print("Relay destroyed!")
+				# Clear our tether if we were holding one connected to this relay
+				if node_to_tether_from == nearby_object:
+					node_to_tether_from = null
+					queue_redraw()
+				nearby_object.break_relay()
+				nearby_object = null
+				interact_hold_timer = 0.0
+		else:
+			interact_hold_timer = 0.0
+	else:
+		interact_hold_timer = 0.0
+
 func find_nearest_interactable():
 	var closest = null
 	var closest_dist = 99999
@@ -130,18 +159,16 @@ func find_nearest_interactable():
 	nearby_object = closest
 
 func spawn_dropped_battery(battery):
-	if battery.tier_data == null:
-		print("ERROR: Battery has no tier data")
+	if battery == null:
 		return
 	
-	var scene = battery.tier_data.pickup_scene
-	
-	if scene == null:
-		print("ERROR: No pickup scene for this tier")
-		return
-	
-	var obj = scene.instantiate()
+	var obj = BatteryPickup.new()
 	obj.battery = battery
+	
+	var sprite = Sprite2D.new()
+	sprite.texture = preload("res://assets/dummyitem2.png")
+	sprite.scale = Vector2(2, 2)
+	obj.add_child(sprite)
 	
 	var drop_dir = -1 if $AnimatedSprite2D.flip_h else 1
 	var drop_offset = Vector2(50 * drop_dir, 0)
@@ -229,19 +256,29 @@ func handle_item():
 		else:
 			spawn_dropped_item(item)
 
-func check_oxygen_relay_nearby():
+func check_oxygen_relay_nearby(delta):
 	var in_oxygen = false
+	nearest_relay = null
+	var min_dist = INF
 	
 	# Check all oxygen relays in the scene
 	for relay in get_tree().get_nodes_in_group("oxygen_nodes"):
+		# Check for nearest relay for the compass
+		var dist = global_position.distance_to(relay.global_position)
+		if dist < min_dist:
+			min_dist = dist
+			nearest_relay = relay
+			nearest_relay_distance = dist
+			
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
 			in_oxygen = true
-			break
 			
 	if in_oxygen:
 		# Recharge oxygen
-		pass
+		current_oxygen += 20.0 * delta
 	else:
 		# Drain oxygen
-		pass
+		current_oxygen -= 5.0 * delta
+		
+	current_oxygen = clamp(current_oxygen, 0.0, max_oxygen)

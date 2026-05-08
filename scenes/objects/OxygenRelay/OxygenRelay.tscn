@@ -8,6 +8,7 @@ radius = 1024.0
 
 [node name="OxygenRelay" type="Area2D" unique_id=1743183431]
 script = ExtResource("1_1ysro")
+tether_width = 8.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=327393115]
 texture = ExtResource("2_corod")
@@ -16,3 +17,5 @@ texture = ExtResource("2_corod")
 shape = SubResource("CircleShape2D_wd1cg")
 
 [node name="Line2D" type="Line2D" parent="." unique_id=261303838]
+begin_cap_mode = 2
+end_cap_mode = 2

@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cfv8x3akflcs3" path="res://scenes/world/Base.tscn" id="10_7vje3"]
 [ext_resource type="Texture2D" uid="uid://3ou32hpic26j" path="res://assets/background/starry-background.jpg" id="11_mkkyj"]
 [ext_resource type="PackedScene" uid="uid://chv4xgyc213tu" path="res://scenes/objects/OxygenRelay/OxygenRelay.tscn" id="13_xmr2h"]
+[ext_resource type="PackedScene" uid="uid://c8yia6agtsthb" path="res://scenes/UI/HUD/HUD.tscn" id="14_xh3pg"]
 
 [node name="World" type="Node2D" unique_id=1799235330]
 script = ExtResource("1_5cotu")
@@ -28,29 +29,31 @@ position = Vector2(0, 23)
 
 [node name="Base" parent="." unique_id=1931406139 instance=ExtResource("10_7vje3")]
 
-[node name="Parallax2D" type="Parallax2D" parent="." unique_id=1301202719]
-z_index = -1
-scale = Vector2(0.12799676, 0.12799676)
-scroll_scale = Vector2(0.015, 0.015)
-repeat_size = Vector2(7001, 4001)
-repeat_times = 37
-
-[node name="TextureRect" type="TextureRect" parent="Parallax2D" unique_id=519096962]
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("11_mkkyj")
-
 [node name="OxygenRelay" parent="." unique_id=1743183431 instance=ExtResource("13_xmr2h")]
 position = Vector2(173, -34)
 scale = Vector2(0.57608557, 0.57608557)
 max_tether_distance = 3000.0
 
 [node name="OxygenRelay2" parent="." unique_id=866412739 instance=ExtResource("13_xmr2h")]
-position = Vector2(839, 559)
+position = Vector2(919, 692)
 scale = Vector2(0.57608557, 0.57608557)
 max_tether_distance = 3000.0
 
 [node name="OxygenRelay3" parent="." unique_id=931597682 instance=ExtResource("13_xmr2h")]
-position = Vector2(1835, 679.99994)
+position = Vector2(1976.9999, 760)
 scale = Vector2(0.57608557, 0.57608557)
 max_tether_distance = 3000.0
+
+[node name="CanvasLayer" parent="." unique_id=340894874 instance=ExtResource("14_xh3pg")]
+
+[node name="Background" type="Parallax2D" parent="." unique_id=1301202719]
+z_index = -1
+scale = Vector2(0.12799676, 0.12799676)
+scroll_scale = Vector2(0.015, 0.015)
+repeat_size = Vector2(7001, 4001)
+repeat_times = 37
+
+[node name="TextureRect" type="TextureRect" parent="Background" unique_id=519096962]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("11_mkkyj")
