@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://va6xsxah2lsr"]
 
-[ext_resource type="Script" uid="uid://b3e6sesqpignf" path="res://scripts/UI/main_menu.gd" id="1_58fj5"]
-[ext_resource type="Script" uid="uid://c23puij3t68c3" path="res://scripts/UI/link_button.gd" id="2_3h7gc"]
+[ext_resource type="Script" path="res://scripts/UI/main_menu.gd" id="1_58fj5"]
+[ext_resource type="Script" path="res://scripts/UI/link_button.gd" id="2_3h7gc"]
 [ext_resource type="PackedScene" uid="uid://85h3vg0wjqs6" path="res://scenes/UI/ScreenStar.tscn" id="2_4vh8y"]
 [ext_resource type="FontFile" uid="uid://d4je3ljl6r5xs" path="res://assets/UI/LibreBodoni-Regular.otf" id="3_4vh8y"]
+[ext_resource type="Script" uid="uid://d3chtye52aqy7" path="res://scenes/UI/exit_button.gd" id="5_b1p1q"]
 
 [node name="MainMenu" type="MarginContainer" unique_id=1686456736]
 anchors_preset = 15
@@ -25,7 +26,7 @@ size_flags_vertical = 4
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="LinkButton" type="LinkButton" parent="VBoxContainer" unique_id=1597966005]
+[node name="StartButton" type="LinkButton" parent="VBoxContainer" unique_id=1597966005]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("3_4vh8y")
@@ -43,16 +44,18 @@ theme_override_font_sizes/font_size = 35
 text = "Credits"
 underline = 2
 
-[node name="LinkButton3" type="LinkButton" parent="VBoxContainer" unique_id=1748742214]
+[node name="ExitButton" type="LinkButton" parent="VBoxContainer" unique_id=1748742214]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("3_4vh8y")
 theme_override_font_sizes/font_size = 35
 text = "Exit"
 underline = 2
+script = ExtResource("5_b1p1q")
 
 [node name="Timer" type="Timer" parent="." unique_id=1233199078]
 autostart = true
 
-[connection signal="pressed" from="VBoxContainer/LinkButton" to="VBoxContainer/LinkButton" method="_on_pressed"]
+[connection signal="pressed" from="VBoxContainer/StartButton" to="VBoxContainer/StartButton" method="_on_pressed"]
+[connection signal="pressed" from="VBoxContainer/ExitButton" to="VBoxContainer/ExitButton" method="_on_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
