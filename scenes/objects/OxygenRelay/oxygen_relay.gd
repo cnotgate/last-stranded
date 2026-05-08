@@ -44,7 +44,6 @@ func update_network():
 # Connect this node to another node
 func connect_to(target_node: OxygenRelay):
 	var distance = global_position.distance_to(target_node.global_position)
-	print("Attempting to connect. Distance is: ", distance, " / Max is: ", max_tether_distance)
 	
 	if distance > max_tether_distance:
 		print("Too far to tether!")

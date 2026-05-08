@@ -32,6 +32,7 @@ position = Vector2(0, 23)
 [node name="OxygenRelay" parent="." unique_id=1743183431 instance=ExtResource("13_xmr2h")]
 position = Vector2(173, -34)
 scale = Vector2(0.57608557, 0.57608557)
+is_source = true
 max_tether_distance = 3000.0
 
 [node name="OxygenRelay2" parent="." unique_id=866412739 instance=ExtResource("13_xmr2h")]

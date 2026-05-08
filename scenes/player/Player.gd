@@ -272,13 +272,14 @@ func check_oxygen_relay_nearby(delta):
 			
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
+			print("Player is in oxygen relay area!")
 			in_oxygen = true
 			
 	if in_oxygen:
 		# Recharge oxygen
-		current_oxygen += 20.0 * delta
+		current_oxygen += 5.0 * delta
 	else:
 		# Drain oxygen
-		current_oxygen -= 5.0 * delta
+		current_oxygen -= 0.55 * delta
 		
 	current_oxygen = clamp(current_oxygen, 0.0, max_oxygen)
