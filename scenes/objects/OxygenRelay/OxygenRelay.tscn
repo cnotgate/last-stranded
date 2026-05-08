@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://chv4xgyc213tu"]
+
+[ext_resource type="Script" uid="uid://cgu6cokhvoul0" path="res://scenes/objects/OxygenRelay/oxygen_relay.gd" id="1_1ysro"]
+[ext_resource type="Texture2D" uid="uid://bxnayma8a6vhv" path="res://assets/oxygenrelay/oxygenrelay.png" id="2_corod"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wd1cg"]
+radius = 1024.0
+
+[node name="OxygenRelay" type="Area2D" unique_id=1743183431]
+script = ExtResource("1_1ysro")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=327393115]
+texture = ExtResource("2_corod")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=42643581]
+shape = SubResource("CircleShape2D_wd1cg")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=261303838]

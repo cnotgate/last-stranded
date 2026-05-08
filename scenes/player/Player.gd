@@ -13,6 +13,7 @@ var nearby_object = null
 var selected_slot := 0
 
 var debug_timer := 0.0
+var node_to_tether_from: OxygenRelay = null
 
 func _ready():
 	# Test battery input
@@ -33,6 +34,7 @@ func _physics_process(delta):
 	handle_effects()
 	find_nearest_interactable()
 	handle_item()
+	check_oxygen_relay_nearby()
 	
 	# I hate debugging
 	debug_timer += delta
@@ -52,6 +54,15 @@ func _physics_process(delta):
 			print("No Battery")
 
 	move_and_slide()
+	
+	# Request to redraw lines if we are holding a tether
+	if node_to_tether_from != null:
+		queue_redraw()
+
+func _draw():
+	if node_to_tether_from != null:
+		# Draw a semi-transparent line from the player to the relay they grabbed the tether from
+		draw_line(Vector2.ZERO, to_local(node_to_tether_from.global_position), Color(1.0, 1.0, 1.0, 1.0), 3.0)
 
 # Main movement
 func handle_movement(delta):
@@ -88,9 +99,17 @@ func handle_movement(delta):
 	# Sliding (low grav feeling)
 	velocity *= sliding
 
-	# Rotation
-	if velocity.length() > 5:
-		rotation = velocity.angle()
+	# Character orientation and animation
+	var sprite = $AnimatedSprite2D
+	if velocity.x > 5:
+		sprite.flip_h = false
+	elif velocity.x < -5:
+		sprite.flip_h = true
+		
+	if velocity.length() > 10:
+		sprite.play("moving")
+	else:
+		sprite.play("idle")
 
 # Emit particles using godots particle system a great system for making particles
 func handle_effects():
@@ -102,9 +121,9 @@ func find_nearest_interactable():
 	var closest_dist = 99999
 	
 	for obj in get_tree().get_nodes_in_group("interactable"):
-		var dist = position.distance_to(obj.position)
+		var dist = global_position.distance_to(obj.global_position)
 		
-		if dist < 100 and dist < closest_dist:
+		if dist < 150 and dist < closest_dist:
 			closest = obj
 			closest_dist = dist
 	
@@ -124,7 +143,8 @@ func spawn_dropped_battery(battery):
 	var obj = scene.instantiate()
 	obj.battery = battery
 	
-	var drop_offset = Vector2(50, 0).rotated(rotation)
+	var drop_dir = -1 if $AnimatedSprite2D.flip_h else 1
+	var drop_offset = Vector2(50 * drop_dir, 0)
 	obj.position = position + drop_offset
 	
 	get_parent().add_child(obj)
@@ -150,7 +170,8 @@ func spawn_dropped_item(data):
 	var obj = scene.instantiate()
 	obj.data = data
 	
-	var drop_offset = Vector2(50, 0).rotated(rotation)
+	var drop_dir = -1 if $AnimatedSprite2D.flip_h else 1
+	var drop_offset = Vector2(50 * drop_dir, 0)
 	obj.position = position + drop_offset
 	
 	get_parent().add_child(obj)
@@ -179,19 +200,48 @@ func handle_item():
 		print("Selected slot:", selected_slot)
 	
 	if Input.is_action_just_pressed("interact"):
+		print("Interact pressed! Nearby object: ", nearby_object)
 		if nearby_object != null:
 			nearby_object.interact(self)
 			# Debug helper
 			$Inventory.print_inventory()
 	if Input.is_action_just_pressed("drop_item"):
-		var obj = inventory.remove_from_slot(selected_slot)
+		# If holding a tether, drop it first
+		if node_to_tether_from != null:
+			node_to_tether_from = null
+			queue_redraw() # Clear the drawn line
+			print("Tether cancelled.")
+			return
+			
+		if inventory == null:
+			print("Error: Inventory node not found!")
+			return
+			
+		var item = inventory.remove_from_slot(selected_slot)
 		
-		if obj == null:
+		if item == null:
 			print("Slot empty!")
 			return
 		
 		# Battery slot
 		if selected_slot == 0:
-			spawn_dropped_battery(obj)
+			spawn_dropped_battery(item)
 		else:
-			spawn_dropped_item(obj)
+			spawn_dropped_item(item)
+
+func check_oxygen_relay_nearby():
+	var in_oxygen = false
+	
+	# Check all oxygen relays in the scene
+	for relay in get_tree().get_nodes_in_group("oxygen_nodes"):
+		# If the relay has oxygen and the player's body is inside its Area2D
+		if relay.has_oxygen and relay.overlaps_body(self):
+			in_oxygen = true
+			break
+			
+	if in_oxygen:
+		# Recharge oxygen
+		pass
+	else:
+		# Drain oxygen
+		pass
