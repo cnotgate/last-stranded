@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://85h3vg0wjqs6"]
+
+[ext_resource type="Texture2D" uid="uid://xqn88mw16xsj" path="res://assets/UI/Star MainMenu.png" id="1_a7vh6"]
+[ext_resource type="Script" uid="uid://do6ypmnpr623u" path="res://scripts/UI/star_screen.gd" id="2_8tqc5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6o52"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iabor"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wyhqi"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovltw"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nufrc"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pwj03"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ylgq"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7hsal"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6iuxi"]
+atlas = ExtResource("1_a7vh6")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fptei"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6o52")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iabor")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wyhqi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovltw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nufrc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pwj03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ylgq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7hsal")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6iuxi")
+}],
+"loop": true,
+"name": &"star_rotate",
+"speed": 15.0
+}]
+
+[node name="ScreenStar" type="AnimatedSprite2D" unique_id=477689147]
+scale = Vector2(0.1, 0.1)
+sprite_frames = SubResource("SpriteFrames_fptei")
+animation = &"star_rotate"
+autoplay = "star_rotate"
+script = ExtResource("2_8tqc5")
