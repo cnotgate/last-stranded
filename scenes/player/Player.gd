@@ -4,10 +4,25 @@ extends CharacterBody2D
 @export var max_speed: float = 200.0
 @export var sliding: float = 0.985
 @export var brake_strength: float = 0.9
+@export var ik_offset_amount: float = 5.0
+
 
 @onready var boost_system = $Boost
 @onready var inventory = $Inventory
 @onready var thruster = $GPUParticles2D
+
+# Character IK
+@onready var leg_r_target = $"Character Container/IK Targets/LegR Target"
+@onready var leg_l_target = $"Character Container/IK Targets/LegL Target"
+@onready var arm_r_target = $"Character Container/IK Targets/ArmR Target"
+@onready var arm_l_target = $"Character Container/IK Targets/ArmL Target"
+@onready var char_container = $"Character Container"
+
+var leg_r_base: Vector2
+var leg_l_base: Vector2
+var arm_r_base: Vector2
+var arm_l_base: Vector2
+var current_facing: float = 1.0
 
 var nearby_object = null
 var selected_slot := 0
@@ -29,6 +44,11 @@ func _ready():
 	
 	var generator = BatteryGenerator.new()
 	var battery = generator.generate_from_tier(tier1)
+	
+	leg_r_base = leg_r_target.position
+	leg_l_base = leg_l_target.position
+	arm_r_base = arm_r_target.position
+	arm_l_base = arm_l_target.position
 	
 	$Inventory.insert_battery(battery)
 		
@@ -98,7 +118,7 @@ func handle_movement(delta):
 
 	# Brake
 	if Input.is_action_pressed("brake"):
-		velocity *= brake_strength
+		velocity -= velocity * (1 - brake_strength)
 
 	# Get dynamic max speed (boost affects it)
 	var current_max_speed = max_speed * boost_system.get_boost_multiplier()
@@ -109,18 +129,40 @@ func handle_movement(delta):
 
 	# Sliding (low grav feeling)
 	velocity *= sliding
-
-	# Character orientation and animation
-	var sprite = $AnimatedSprite2D
-	if velocity.x > 5:
-		sprite.flip_h = false
-	elif velocity.x < -5:
-		sprite.flip_h = true
-		
-	if velocity.length() > 10:
-		sprite.play("moving")
+	
+	## Character orientation and skeleton animation
+	var new_ik_offset
+	if boost_system.is_boosting():
+		new_ik_offset = ik_offset_amount * 2
 	else:
-		sprite.play("idle")
+		new_ik_offset = ik_offset_amount
+	
+	if abs(velocity.x) > 1.0:
+		var new_facing = sign(velocity.x)
+		if new_facing != current_facing:
+			current_facing = new_facing
+		char_container.scale.x = current_facing
+	
+	var speed_ratio = velocity.length() / current_max_speed
+	var offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
+	var adjusted_offset = Vector2(offset.x * current_facing, offset.y)
+	
+	leg_r_target.position = leg_r_target.position.move_toward(leg_r_base + adjusted_offset, 0.5)
+	leg_l_target.position = leg_l_target.position.move_toward(leg_l_base + adjusted_offset, 0.5)
+	arm_r_target.position = arm_r_target.position.move_toward(arm_r_base + adjusted_offset, 0.5)
+	arm_l_target.position = arm_l_target.position.move_toward(arm_l_base + adjusted_offset, 0.5)
+	
+	## Character orientation and animation
+	#var sprite = $AnimatedSprite2D
+	#if velocity.x > 5:
+		#sprite.flip_h = false
+	#elif velocity.x < -5:
+		#sprite.flip_h = true
+		#
+	#if velocity.length() > 10:
+		#sprite.play("moving")
+	#else:
+		#sprite.play("idle")
 
 # Emit particles using godots particle system a great system for making particles
 func handle_effects():
