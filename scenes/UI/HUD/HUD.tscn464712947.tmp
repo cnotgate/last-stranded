@@ -13,14 +13,6 @@ shader_parameter/vignette_intensity = 0.0
 script = ExtResource("1_8y1ok")
 treshold = 70.0
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1032511420]
-material = SubResource("ShaderMaterial_vv405")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
 [node name="Control" type="Control" parent="." unique_id=230155718]
 layout_mode = 3
 anchors_preset = 0
@@ -129,3 +121,8 @@ offset_top = 45.0
 offset_right = 44.0
 offset_bottom = 68.0
 text = "500m"
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1032511420]
+material = SubResource("ShaderMaterial_vv405")
+offset_right = 1153.0
+offset_bottom = 648.0

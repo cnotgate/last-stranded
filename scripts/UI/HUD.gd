@@ -1,12 +1,14 @@
 extends CanvasLayer
 
 @export var player: CharacterBody2D
+@export var treshold: float
 
 @onready var oxygen_bar = $Control/VBoxContainer/OxygenBar
 @onready var battery_bar = $Control/VBoxContainer/BatteryBar
 @onready var slot_container = $Control/HBoxContainer
 @onready var arrow = $Control/Compass/ArrowIcon
 @onready var distance_label = $Control/Compass/DistanceLabel
+@onready var color_rect = $ColorRect
 
 func _process(delta):
 	# If player isn't assigned, try to automatically find it
@@ -20,7 +22,19 @@ func _process(delta):
 	# 1. Update Bars
 	oxygen_bar.value = player.current_oxygen
 	oxygen_bar.max_value = player.max_oxygen
+	var oxygen_percent = oxygen_bar.value / oxygen_bar.max_value
 	
+	if oxygen_percent < treshold:
+		print("oxygen_percent: ", oxygen_percent)
+		var intensity = remap(oxygen_percent, 0.0, treshold, 1.0, 0.0)
+		intensity = clamp(intensity, 0.0, 1.0)
+		
+		color_rect.material.set_shader_parameter("blur_amount", intensity)
+		color_rect.material.set_shader_parameter("vignette_intensity", intensity)
+		
+		if oxygen_percent <= 0:
+			color_rect.modulate = Color.BLACK
+		
 	if player.get_node("Inventory").has_battery():
 		var battery = player.get_node("Inventory").battery
 		battery_bar.value = battery.current_energy
