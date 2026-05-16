@@ -20,7 +20,7 @@ script = ExtResource("1_5cotu")
 zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtResource("4_mkkyj"), ExtResource("5_xm1px"), ExtResource("6_xmr2h"), ExtResource("7_xh3pg"), ExtResource("8_jltbn")])
 
 [node name="SpaceStation" parent="." unique_id=193361841 instance=ExtResource("9_xm1px")]
-position = Vector2(435, -472.00003)
+position = Vector2(90.00003, -130.00003)
 rotation = -0.42010105
 scale = Vector2(3.810286, 3.810286)
 
