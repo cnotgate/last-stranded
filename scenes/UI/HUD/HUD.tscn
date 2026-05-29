@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bftta06087a51" path="res://scripts/UI/HUD.gd" id="1_8y1ok"]
 [ext_resource type="Texture2D" uid="uid://c5or56301nqy4" path="res://scenes/UI/HUD/pixel-arrow-png.png" id="2_m0ngv"]
 [ext_resource type="Shader" uid="uid://dic8pxjvbg7la" path="res://assets/UI/OxygenLevel.gdshader" id="3_6gdni"]
+[ext_resource type="Script" path="res://scripts/UI/Minimap.gd" id="4_minimap"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vv405"]
 shader = ExtResource("3_6gdni")
@@ -39,6 +40,18 @@ layout_mode = 2
 
 [node name="BatteryBar" type="ProgressBar" parent="Control/VBoxContainer" unique_id=1736686323]
 layout_mode = 2
+
+[node name="SprintLabel" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
+visible = false
+text = "⚡ SPRINT: 10s"
+horizontal_alignment = 0
+
+[node name="ScannerLabel" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
+visible = false
+text = "📡 SCAN: 30s"
+horizontal_alignment = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=1256166909]
 layout_mode = 0
@@ -129,3 +142,15 @@ offset_top = 45.0
 offset_right = 44.0
 offset_bottom = 68.0
 text = "500m"
+
+[node name="Minimap" type="Control" parent="Control"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 408.0
+offset_right = 200.0
+offset_bottom = 588.0
+grow_vertical = 0
+script = ExtResource("4_minimap")
