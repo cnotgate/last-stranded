@@ -12,6 +12,12 @@ const WORLD_RADIUS = 6 * UNITS_PER_KM
 var debug_timer := 0.0
 var zone_spawn_data := {}
 
+# Powerup scenes (rare spawns, separate from loot tables)
+var sprint_battery_scene = preload("res://scenes/items/SprintBatteryPickup.tscn")
+var oxygen_canister_scene = preload("res://scenes/items/OxygenCanisterPickup.tscn")
+var scanner_scene = preload("res://scenes/items/ScannerPickup.tscn")
+
+
 func get_zone(distance: float) -> int:
 	if distance >= WORLD_RADIUS:
 		return -1
@@ -81,7 +87,8 @@ func generate_resources():
 		zone_spawn_data[zone] = {
 			"resource": {},
 			"chest": {},
-			"enemy": {}
+			"enemy": {},
+			"powerup": {}
 		}
 		
 		var table = zone_loot_tables[zone]
@@ -162,8 +169,45 @@ func _process(delta):
 		if is_out_of_bounds(player.position):
 			print("OUT OF BOUNDS - DEAD ZONE")
 
+# Rare powerup spawns — scattered across random zones
+func generate_powerups():
+	var total_zones = zone_loot_tables.size()
+	if total_zones == 0:
+		return
+	
+	# Spawn 1-2 Sprint Batteries in random zones
+	var sprint_count = randi_range(1, 2)
+	for i in sprint_count:
+		var zone = randi() % total_zones
+		var pos = random_point_in_zone(zone)
+		var obj = sprint_battery_scene.instantiate()
+		obj.position = pos
+		spawn_and_track(obj, zone, "powerup")
+		print("Spawned Sprint Battery in zone", zone)
+	
+	# Spawn 1-2 Oxygen Canisters in random zones
+	var oxygen_count = randi_range(1, 2)
+	for i in oxygen_count:
+		var zone = randi() % total_zones
+		var pos = random_point_in_zone(zone)
+		var obj = oxygen_canister_scene.instantiate()
+		obj.position = pos
+		spawn_and_track(obj, zone, "powerup")
+		print("Spawned Oxygen Canister in zone", zone)
+		
+	# Spawn 1-2 Scanners in random zones
+	var scanner_count = randi_range(1, 2)
+	for i in scanner_count:
+		var zone = randi() % total_zones
+		var pos = random_point_in_zone(zone)
+		var obj = scanner_scene.instantiate()
+		obj.position = pos
+		spawn_and_track(obj, zone, "powerup")
+		print("Spawned Scanner in zone", zone)
+
 func _ready():
 	generate_resources()
+	generate_powerups()
 	print_spawn_summary()
 	# generate_chests()
 	# generate_enemies()
