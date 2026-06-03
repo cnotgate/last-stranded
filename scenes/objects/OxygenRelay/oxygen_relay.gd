@@ -35,7 +35,7 @@ func update_network():
 	if has_oxygen:
 		modulate = Color(1, 1, 1) # Normal
 	else:
-		modulate = Color(0.8, 0.8, 0.8) # Darkened / Off
+		modulate = Color(0.6, 0.6, 0.6) # Darkened / Off
 		
 	# Tell all children to update
 	for child in connected_nodes:

@@ -47,6 +47,18 @@ var oxygen_pipe: Rope = null
 var handle_start: Marker2D = null
 var handle_end: Marker2D = null
 
+# Sprint Battery system
+var is_sprint_active: bool = false
+var sprint_timer: float = 0.0
+var sprint_duration: float = 10.0
+var sprint_boost_bonus: float = 0.75  # +75% boost
+var sprint_drain_per_sec: float = 5.0
+
+# Scanner system
+var is_scanner_active: bool = false
+var scanner_timer: float = 0.0
+var scanner_duration: float = 30.0
+
 func _ready():
 	add_to_group("player")
 	
@@ -76,7 +88,9 @@ func _physics_process(delta):
 	handle_interact_hold(delta)
 	check_oxygen_relay_nearby(delta)
 	connect_nearest_oxygen_relay()
-	
+	handle_sprint(delta)
+	handle_scanner(delta)
+
 	# I hate debugging
 	debug_timer += delta
 	
@@ -111,20 +125,31 @@ func _draw():
 func handle_movement(delta):
 	var input_dir = Vector2.ZERO
 
-	if Input.is_action_pressed("move_up"):    input_dir.y -= 1
-	if Input.is_action_pressed("move_down"):  input_dir.y += 1
-	if Input.is_action_pressed("move_left"):  input_dir.x -= 1
-	if Input.is_action_pressed("move_right"): input_dir.x += 1
+	if Input.is_action_pressed("move_up"):
+		input_dir.y -= 1
+	if Input.is_action_pressed("move_down"):
+		input_dir.y += 1
+	if Input.is_action_pressed("move_left"):
+		input_dir.x -= 1
+	if Input.is_action_pressed("move_right"):
+		input_dir.x += 1
 
 	input_dir = input_dir.normalized()
 
+	# Get boost multiplier from system
 	var current_thrust = thrust * boost_system.get_boost_multiplier()
+	
+	# Apply acceleration
 	velocity += input_dir * current_thrust * delta
 
+	# Brake
 	if Input.is_action_pressed("brake"):
 		velocity -= velocity * (1 - brake_strength)
 
+	# Get dynamic max speed (boost affects it)
 	var current_max_speed = max_speed * boost_system.get_boost_multiplier()
+
+	# Limit speed
 	if velocity.length() > current_max_speed:
 		velocity = velocity.normalized() * current_max_speed
 
@@ -139,7 +164,7 @@ func handle_movement(delta):
 		if current_distance > rope_max_length and current_distance <= (rope_max_length * 1.1):
 			# Calculate how far we have stretched past the target length (0.0 to 1.0)
 			var stretch_ratio = (current_distance - rope_max_length) / ((rope_max_length * 1.1) - rope_max_length)
-			
+
 			# Check if the player is actively trying to move AWAY
 			if velocity.dot(pull_direction) < 0:
 				# Apply a progressive pulling force back toward the relay
@@ -149,7 +174,7 @@ func handle_movement(delta):
 		elif current_distance > (rope_max_length * 1.1):
 			# 1. Snap player back to the maximum allowed edge boundary
 			global_position = current_connected_relay.global_position + (relay_to_player.normalized() * (rope_max_length * 1.1))
-			
+
 			# 2. Kill outward velocity (Cancel out components moving away from the anchor)
 			var outward_velocity = velocity.dot(pull_direction)
 			if outward_velocity < 0:
@@ -166,48 +191,24 @@ func handle_movement(delta):
 		new_ik_offset = ik_offset_amount * 2
 	else:
 		new_ik_offset = ik_offset_amount
-
-	# 1. ATUR ROTASI MENGIKUTI MOUSE
-	# Mencari sudut (dalam radian) dari posisi player ke posisi mouse di dunia (global)
-	var target_rotation = global_position.angle_to_point(get_global_mouse_position())
-
-	# Putar player secara instan (atau gunakan lerp_angle jika ingin rotasinya mulus/smooth)
-	rotation = rotate_toward(rotation, target_rotation, rotation_speed * delta)
-	# Contoh kalau mau mulus (buka komen di bawah):
-	# rotation = lerp_angle(rotation, target_rotation, 0.1)
-
-	# 2. TENTUKAN ARAH HADAP BERDASARKAN VELOCITY (UNTUK SKALA FLIPPING)
+	
 	if abs(velocity.x) > 1.0:
-		current_facing = sign(velocity.x)
-		
-	# 3. CEK KONDISI JIKA PLAYER TERBALIK (Upside Down)
-	var is_upside_down = abs(rotation) > (PI / 2.0)
-
-	if is_upside_down:
-		char_container.scale.y = -1
-	else:
-		char_container.scale.y = 1
-
-	# 4. HITUNG OFFSET IK BERDASARKAN VELOCITY GLOBAL
+		var new_facing = sign(velocity.x)
+		if new_facing != current_facing:
+			current_facing = new_facing
+		char_container.scale.x = current_facing
+	
 	var speed_ratio = velocity.length() / current_max_speed
-	var global_offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
-
-	# 5. TERJEMAHKAN OFFSET DUNIA KE LOKAL (SANGAT PENTING KARENA ROTASI BERUBAH TERUS)
-	# Fungsi rotated(-rotation) memastikan tarikan inersia tangan/kaki selalu berlawanan 
-	# dengan arah gerak, tidak peduli ke mana arah rotasi badan player.
-	var local_offset = global_offset.rotated(-rotation)
-
-	# Sesuaikan dengan arah hadap lokal (X)
-	var adjusted_offset = Vector2(local_offset.x * current_facing, local_offset.y)
-
-	# 6. JALANKAN PERGERAKAN TARGET IK
+	var offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
+	var adjusted_offset = Vector2(offset.x * current_facing, offset.y)
+	
 	leg_r_target.position = leg_r_target.position.move_toward(leg_r_base + adjusted_offset, 0.5)
 	leg_l_target.position = leg_l_target.position.move_toward(leg_l_base + adjusted_offset, 0.5)
 	arm_r_target.position = arm_r_target.position.move_toward(arm_r_base + adjusted_offset, 0.5)
 	arm_l_target.position = arm_l_target.position.move_toward(arm_l_base + adjusted_offset, 0.5)
 	head_target.position = get_local_mouse_position()
-	
-	
+
+
 	## Character orientation and animation
 	#var sprite = $AnimatedSprite2D
 	#if velocity.x > 5:
@@ -360,7 +361,7 @@ func check_oxygen_relay_nearby(delta):
 	nearest_active_relay = null
 	var min_dist = INF
 	var min_dist_active = INF
-	
+
 	# Check all oxygen relays in the scene
 	for relay in get_tree().get_nodes_in_group("oxygen_nodes"):
 		# Check for nearest relay for the compass
@@ -369,16 +370,16 @@ func check_oxygen_relay_nearby(delta):
 			min_dist = dist
 			nearest_relay = relay
 			nearest_relay_distance = dist
-		
+			
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
-			#print("Player is in oxygen relay area!")
+			print("Player is in oxygen relay area!")
 			in_oxygen = true
 			if dist < min_dist_active:
 				min_dist_active = dist
 				nearest_active_relay = relay
 				nearest_active_relay_distance = dist
-			
+
 	if in_oxygen:
 		# Recharge oxygen
 		current_oxygen += 5.0 * delta
@@ -391,10 +392,10 @@ func check_oxygen_relay_nearby(delta):
 func connect_nearest_oxygen_relay():
 	if nearest_active_relay != current_connected_relay:
 		current_connected_relay = nearest_active_relay
-		
+
 		# Clean up everything safely (Handles first, then Rope)
 		destroy_old_pipe()
-		
+
 		# Only build if the new connection isn't null!
 		if current_connected_relay != null:
 			create_oxygen_rope()
@@ -413,21 +414,21 @@ func create_oxygen_rope():
 	rope2d._points = [to_local(global_position), to_local(current_connected_relay.global_position)]
 	add_child(rope2d)
 	oxygen_pipe = rope2d
-	
+
 	# 2. Start Handle: Make it a child of THIS player/object
 	handle_start = RopeHandle.new()
 	handle_start.name = "StartHandle"
 	add_child(handle_start) # Adding it here automatically positions it at our Vector2.ZERO center
-	
+
 	# Point it to the rope and select the start position
 	handle_start.rope_path = rope2d.get_path()
 	handle_start.rope_position = 0.0
-	
+
 	# 3. End Handle: Make it a child of the RELAY node
 	handle_end = RopeHandle.new()
 	handle_end.name = "EndHandle"
 	current_connected_relay.add_child(handle_end) # Adding it here positions it perfectly at the relay's center
-	
+
 	# Point it to the rope and select the end position
 	handle_end.rope_path = rope2d.get_path()
 	handle_end.rope_position = 1.0
@@ -437,7 +438,7 @@ func destroy_old_pipe():
 	if is_instance_valid(handle_start):
 		handle_start.queue_free()
 		handle_start = null
-		
+
 	if is_instance_valid(handle_end):
 		handle_end.queue_free()
 		handle_end = null
@@ -446,3 +447,35 @@ func destroy_old_pipe():
 	if is_instance_valid(oxygen_pipe):
 		oxygen_pipe.queue_free()
 		oxygen_pipe = null
+
+func activate_sprint():
+	is_sprint_active = true
+	sprint_timer = sprint_duration
+	print("Sprint activated! Duration:", sprint_duration, "s")
+
+func handle_sprint(delta):
+	if not is_sprint_active:
+		return
+
+	sprint_timer -= delta
+
+	if sprint_timer <= 0:
+		is_sprint_active = false
+		sprint_timer = 0.0
+		print("Sprint expired!")
+
+func activate_scanner():
+	is_scanner_active = true
+	scanner_timer = scanner_duration
+	print("Scanner activated! Duration:", scanner_duration, "s")
+
+func handle_scanner(delta):
+	if not is_scanner_active:
+		return
+
+	scanner_timer -= delta
+
+	if scanner_timer <= 0:
+		is_scanner_active = false
+		scanner_timer = 0.0
+		print("Scanner expired!")
