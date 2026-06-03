@@ -131,6 +131,7 @@ z_index = 1
 script = ExtResource("1_d60m5")
 
 [node name="Character Container" parent="." unique_id=2019617988 instance=ExtResource("2_p1lr0")]
+position = Vector2(-8, 5)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=142194069]
 visible = false
