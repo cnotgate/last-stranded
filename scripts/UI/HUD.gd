@@ -12,8 +12,14 @@ extends CanvasLayer
 @onready var sprint_label = $Control/VBoxContainer/SprintLabel
 @onready var scanner_label = $Control/VBoxContainer/ScannerLabel
 @onready var minimap = $Control/Minimap
+@onready var logs_menu = $LogsMenu
+@onready var hud = $Control
+@onready var input_hint = $Control/InputHint
+@onready var audio = $AudioStreamPlayer
 
 func _process(delta):
+	_handle_ui_input()
+	
 	# If player isn't assigned, try to automatically find it
 	if player == null:
 		var p = get_tree().get_first_node_in_group("player")
@@ -134,3 +140,22 @@ func _process(delta):
 	else:
 		if arrow: arrow.visible = false
 		if distance_label: distance_label.visible = false
+
+func _handle_ui_input():
+	if Input.is_action_just_pressed("open_and_close_logs"):
+		audio.play()
+		if logs_menu.visible == false:
+			logs_menu.visible = true
+			hud.visible = false
+			color_rect.visible = false
+		else:
+			logs_menu.visible = false
+			hud.visible = true
+			color_rect.visible = true
+	
+	if Input.is_action_just_pressed("toggle_help"):
+		audio.play()
+		if input_hint.visible == false:
+			input_hint.visible = true
+		else:
+			input_hint.visible = false

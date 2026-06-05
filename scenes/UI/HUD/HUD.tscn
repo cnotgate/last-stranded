@@ -3,7 +3,10 @@
 [ext_resource type="Script" uid="uid://bftta06087a51" path="res://scripts/UI/HUD.gd" id="1_8y1ok"]
 [ext_resource type="Texture2D" uid="uid://c5or56301nqy4" path="res://scenes/UI/HUD/pixel-arrow-png.png" id="2_m0ngv"]
 [ext_resource type="Shader" uid="uid://dic8pxjvbg7la" path="res://assets/UI/OxygenLevel.gdshader" id="3_6gdni"]
-[ext_resource type="Script" path="res://scripts/UI/Minimap.gd" id="4_minimap"]
+[ext_resource type="Script" uid="uid://b1ysnjsmfav8y" path="res://scripts/UI/Minimap.gd" id="4_minimap"]
+[ext_resource type="PackedScene" uid="uid://dio8080qd3vmm" path="res://scenes/UI/logs/LogsMenu.tscn" id="5_6pepf"]
+[ext_resource type="FontFile" uid="uid://d4je3ljl6r5xs" path="res://assets/UI/LibreBodoni-Regular.otf" id="5_n5efx"]
+[ext_resource type="AudioStream" uid="uid://dalegs0wxwp81" path="res://assets/sounds/ui-hover-1.wav" id="7_vrtgj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vv405"]
 shader = ExtResource("3_6gdni")
@@ -41,17 +44,15 @@ layout_mode = 2
 [node name="BatteryBar" type="ProgressBar" parent="Control/VBoxContainer" unique_id=1736686323]
 layout_mode = 2
 
-[node name="SprintLabel" type="Label" parent="Control/VBoxContainer"]
-layout_mode = 2
+[node name="SprintLabel" type="Label" parent="Control/VBoxContainer" unique_id=472228580]
 visible = false
+layout_mode = 2
 text = "⚡ SPRINT: 10s"
-horizontal_alignment = 0
 
-[node name="ScannerLabel" type="Label" parent="Control/VBoxContainer"]
-layout_mode = 2
+[node name="ScannerLabel" type="Label" parent="Control/VBoxContainer" unique_id=1337699672]
 visible = false
+layout_mode = 2
 text = "📡 SCAN: 30s"
-horizontal_alignment = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=1256166909]
 layout_mode = 0
@@ -143,8 +144,8 @@ offset_right = 44.0
 offset_bottom = 68.0
 text = "500m"
 
-[node name="Minimap" type="Control" parent="Control"]
-layout_mode = 3
+[node name="Minimap" type="Control" parent="Control" unique_id=181368245]
+layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -154,3 +155,40 @@ offset_right = 200.0
 offset_bottom = 588.0
 grow_vertical = 0
 script = ExtResource("4_minimap")
+
+[node name="InputHint" type="MarginContainer" parent="Control" unique_id=1328810996]
+layout_mode = 0
+offset_left = 944.0
+offset_top = 99.0
+offset_right = 1139.0
+offset_bottom = 277.0
+
+[node name="Panel" type="Panel" parent="Control/InputHint" unique_id=1005404058]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/InputHint" unique_id=1162284111]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="InputHintList" type="VBoxContainer" parent="Control/InputHint/MarginContainer" unique_id=1780307104]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/InputHint/MarginContainer/InputHintList" unique_id=1041693580]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_n5efx")
+text = "Inputs (Press H to toggle)
+Move 	          - WASD
+Boost 	         - Shift
+Brake	          - Space
+Interact  	    - E
+Logs 	           	- R
+Drop Item  - Q"
+
+[node name="LogsMenu" parent="." unique_id=2104667939 instance=ExtResource("5_6pepf")]
+visible = false
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=442242652]
+stream = ExtResource("7_vrtgj")

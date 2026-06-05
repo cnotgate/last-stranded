@@ -1,6 +1,7 @@
 extends LinkButton
 
 @export var scene_to_file: String
+@onready var button_clicked_audio: AudioStreamPlayer = $ButtonClickedAudio
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,4 +15,5 @@ func _process(delta: float) -> void:
 
 func _on_pressed() -> void:
 	#exit the game
+	button_clicked_audio.play()
 	get_tree().quit()

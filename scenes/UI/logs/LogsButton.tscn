@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://d1aq036balctg"]
+
+[ext_resource type="FontFile" uid="uid://d4je3ljl6r5xs" path="res://assets/UI/LibreBodoni-Regular.otf" id="1_qnrbm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_odcbt"]
+bg_color = Color(0.011764706, 0.011764706, 0.011764706, 0.22745098)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.012617188, 0.012617188, 0.012617188, 1)
+border_blend = true
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[node name="Button" type="Button" unique_id=29270914]
+theme_override_fonts/font = ExtResource("1_qnrbm")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_odcbt")
+text = "Log 1 - Captain Adler"

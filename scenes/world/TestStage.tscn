@@ -23,7 +23,7 @@ script = ExtResource("1_5cotu")
 zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtResource("4_mkkyj"), ExtResource("5_xm1px"), ExtResource("6_xmr2h"), ExtResource("7_xh3pg"), ExtResource("8_jltbn")])
 
 [node name="SpaceStation" parent="." unique_id=193361841 instance=ExtResource("9_xm1px")]
-position = Vector2(435, -472.00003)
+position = Vector2(90.00003, -130.00003)
 rotation = -0.42010105
 scale = Vector2(3.810286, 3.810286)
 
@@ -48,13 +48,13 @@ position = Vector2(1976.9999, 760)
 scale = Vector2(0.57608557, 0.57608557)
 max_tether_distance = 3000.0
 
-[node name="SprintBatteryTest" parent="." instance=ExtResource("15_sprint")]
+[node name="SprintBatteryTest" parent="." unique_id=20014951 instance=ExtResource("15_sprint")]
 position = Vector2(-150, 23)
 
-[node name="OxygenCanisterTest" parent="." instance=ExtResource("16_oxygen")]
+[node name="OxygenCanisterTest" parent="." unique_id=521188747 instance=ExtResource("16_oxygen")]
 position = Vector2(-150, 100)
 
-[node name="ScannerTest" parent="." instance=ExtResource("17_scanner")]
+[node name="ScannerTest" parent="." unique_id=1465261540 instance=ExtResource("17_scanner")]
 position = Vector2(-150, -50)
 
 [node name="CanvasLayer" parent="." unique_id=340894874 instance=ExtResource("14_xh3pg")]
@@ -70,4 +70,5 @@ repeat_times = 37
 [node name="TextureRect" type="TextureRect" parent="Background" unique_id=519096962]
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 texture = ExtResource("11_mkkyj")
