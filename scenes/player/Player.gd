@@ -36,6 +36,18 @@ var current_oxygen: float = 100.0
 var nearest_relay: OxygenRelay = null
 var nearest_relay_distance: float = 0.0
 
+# Sprint Battery system
+var is_sprint_active: bool = false
+var sprint_timer: float = 0.0
+var sprint_duration: float = 10.0
+var sprint_boost_bonus: float = 0.75  # +75% boost
+var sprint_drain_per_sec: float = 5.0
+
+# Scanner system
+var is_scanner_active: bool = false
+var scanner_timer: float = 0.0
+var scanner_duration: float = 30.0
+
 func _ready():
 	add_to_group("player")
 	
@@ -64,6 +76,8 @@ func _physics_process(delta):
 	handle_item()
 	handle_interact_hold(delta)
 	check_oxygen_relay_nearby(delta)
+	handle_sprint(delta)
+	handle_scanner(delta)
 	
 	# I hate debugging
 	debug_timer += delta
@@ -314,7 +328,6 @@ func check_oxygen_relay_nearby(delta):
 			
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
-			print("Player is in oxygen relay area!")
 			in_oxygen = true
 			
 	if in_oxygen:
@@ -325,3 +338,35 @@ func check_oxygen_relay_nearby(delta):
 		current_oxygen -= 0.55 * delta
 		
 	current_oxygen = clamp(current_oxygen, 0.0, max_oxygen)
+
+func activate_sprint():
+	is_sprint_active = true
+	sprint_timer = sprint_duration
+	print("Sprint activated! Duration:", sprint_duration, "s")
+
+func handle_sprint(delta):
+	if not is_sprint_active:
+		return
+	
+	sprint_timer -= delta
+	
+	if sprint_timer <= 0:
+		is_sprint_active = false
+		sprint_timer = 0.0
+		print("Sprint expired!")
+
+func activate_scanner():
+	is_scanner_active = true
+	scanner_timer = scanner_duration
+	print("Scanner activated! Duration:", scanner_duration, "s")
+
+func handle_scanner(delta):
+	if not is_scanner_active:
+		return
+	
+	scanner_timer -= delta
+	
+	if scanner_timer <= 0:
+		is_scanner_active = false
+		scanner_timer = 0.0
+		print("Scanner expired!")

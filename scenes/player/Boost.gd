@@ -35,8 +35,14 @@ func is_boosting() -> bool:
 
 func get_boost_multiplier() -> float:
 	var battery = inventory.battery
+	var player = get_parent()
+	var base = 1.0
 	
-	if battery == null:
-		return 1.0
+	if battery != null and is_boosting():
+		base = battery.boost_multiplier
 	
-	return battery.boost_multiplier if is_boosting() else 1.0
+	# Sprint bonus applies on top of current multiplier
+	if player.is_sprint_active:
+		base += player.sprint_boost_bonus
+	
+	return base

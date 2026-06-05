@@ -135,7 +135,7 @@ script = ExtResource("1_d60m5")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=142194069]
 visible = false
 sprite_frames = SubResource("SpriteFrames_wjlgk")
-animation = &"moving"
+animation = &"idle"
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1692957618]
 emitting = false
@@ -164,5 +164,5 @@ script = ExtResource("3_tn1bn")
 libraries/ = SubResource("AnimationLibrary_dvu4r")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220253312]
-position = Vector2(-2, 0)
+position = Vector2(6, -5)
 shape = SubResource("CapsuleShape2D_rmnoi")

@@ -9,6 +9,9 @@ extends CanvasLayer
 @onready var arrow = $Control/Compass/ArrowIcon
 @onready var distance_label = $Control/Compass/DistanceLabel
 @onready var color_rect = $ColorRect
+@onready var sprint_label = $Control/VBoxContainer/SprintLabel
+@onready var scanner_label = $Control/VBoxContainer/ScannerLabel
+@onready var minimap = $Control/Minimap
 
 func _process(delta):
 	# If player isn't assigned, try to automatically find it
@@ -97,6 +100,23 @@ func _process(delta):
 							icon_rect.texture = preload("res://assets/dummyitem3.png")
 						_:
 							icon_rect.texture = null
+
+	# 4. Update Sprint Timer
+	if player.is_sprint_active:
+		sprint_label.visible = true
+		sprint_label.text = "⚡ SPRINT: " + str(int(ceil(player.sprint_timer))) + "s"
+	else:
+		sprint_label.visible = false
+
+	# 5. Update Scanner Timer and Minimap
+	if player.is_scanner_active:
+		scanner_label.visible = true
+		scanner_label.text = "📡 SCAN: " + str(int(ceil(player.scanner_timer))) + "s"
+		minimap.visible = true
+	else:
+		scanner_label.visible = false
+		minimap.visible = false
+
 
 	# 3. Update Compass
 	if player.nearest_relay != null:
