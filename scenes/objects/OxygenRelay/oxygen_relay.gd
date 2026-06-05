@@ -41,6 +41,22 @@ func update_network():
 	for child in connected_nodes:
 		child.update_network()
 
+func creates_cycle(child_node: OxygenRelay, parent_candidate: OxygenRelay) -> bool:
+	var current = parent_candidate
+	while current != null:
+		if current == child_node:
+			return true
+		current = current.parent_node
+	return false
+
+func show_loop_warning():
+	var ft = Label.new()
+	ft.text = "Loop Connection Blocked!"
+	ft.set_script(preload("res://scripts/ui/FloatingText.gd"))
+	if get_parent():
+		get_parent().add_child(ft)
+		ft.global_position = global_position + Vector2(0, -40)
+
 # Connect this node to another node
 func connect_to(target_node: OxygenRelay):
 	var distance = global_position.distance_to(target_node.global_position)
@@ -64,6 +80,17 @@ func connect_to(target_node: OxygenRelay):
 		curr_parent = target_node
 		curr_child = self
 		
+	# Check if this connection would create a loop
+	if creates_cycle(curr_child, curr_parent):
+		print("Loop connection detected!")
+		show_loop_warning()
+		return false
+		
+	# If this child already had a parent, remove it from the old parent's children list
+	var old_parent = curr_child.parent_node
+	if old_parent != null and old_parent != curr_parent:
+		old_parent.connected_nodes.erase(curr_child)
+		
 	# Establish connection
 	curr_child.parent_node = curr_parent
 	curr_parent.connected_nodes.append(curr_child)
@@ -79,6 +106,8 @@ func connect_to(target_node: OxygenRelay):
 	
 	# Update the network from the parent down
 	curr_parent.update_network()
+	if old_parent != null and old_parent != curr_parent:
+		old_parent.update_network()
 	return true
 
 func break_relay():
