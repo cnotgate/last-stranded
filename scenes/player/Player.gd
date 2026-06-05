@@ -3,8 +3,18 @@ extends CharacterBody2D
 @export var thrust: float = 400.0
 @export var max_speed: float = 200.0
 @export var sliding: float = 0.985
+@export var rotation_speed: float = 5.0
 @export var brake_strength: float = 0.9
-@export var ik_offset_amount: float = 5.0
+@export var ik_offset_amount: float = 15.0
+@export var max_swim_speed: float = 300.0
+@export var max_lean_angle_deg: float = 45.
+
+# Rope Mechanism
+@export var rope_max_length: float = 500.0  # The length where the rope becomes taut
+@export var rope_pull_force: float = 1200.0 # How hard the rope pulls you back when stretched
+@export var detach_hold_time: float = 1.5
+var rope_hold_timer: float = 0.0
+var in_oxygen: bool = false # Oxygen Related on Rope/Pipe
 
 
 @onready var boost_system = $Boost
@@ -16,6 +26,7 @@ extends CharacterBody2D
 @onready var leg_l_target = $"Character Container/IK Targets/LegL Target"
 @onready var arm_r_target = $"Character Container/IK Targets/ArmR Target"
 @onready var arm_l_target = $"Character Container/IK Targets/ArmL Target"
+@onready var head_target = $"Character Container/IK Targets/Head Target"
 @onready var char_container = $"Character Container"
 
 var leg_r_base: Vector2
@@ -34,7 +45,14 @@ var interact_hold_timer: float = 0.0
 @export var max_oxygen: float = 100.0
 var current_oxygen: float = 100.0
 var nearest_relay: OxygenRelay = null
+var nearest_active_relay: OxygenRelay = null
+var current_connected_relay: Node2D = null
 var nearest_relay_distance: float = 0.0
+var nearest_active_relay_distance: float = 0.0
+var oxygen_pipe: Rope = null
+var handle_start: Marker2D = null
+var handle_end: Marker2D = null
+var last_direction_angle: float = 0.0
 
 # Sprint Battery system
 var is_sprint_active: bool = false
@@ -75,10 +93,12 @@ func _physics_process(delta):
 	find_nearest_interactable()
 	handle_item()
 	handle_interact_hold(delta)
+	handle_attachordetach_pipe(delta)
 	check_oxygen_relay_nearby(delta)
+	#connect_nearest_oxygen_relay() // TIDAK DIBUTUHKAN LAGI
 	handle_sprint(delta)
 	handle_scanner(delta)
-	
+
 	# I hate debugging
 	debug_timer += delta
 	
@@ -141,6 +161,35 @@ func handle_movement(delta):
 	if velocity.length() > current_max_speed:
 		velocity = velocity.normalized() * current_max_speed
 
+	# --- NEW: ROPE PULL BACK LOGIC ---
+	if current_connected_relay and is_instance_valid(oxygen_pipe):
+		# Vector pointing from the relay to the player
+		var relay_to_player = global_position - current_connected_relay.global_position
+		var current_distance = relay_to_player.length()
+		var pull_direction = -relay_to_player.normalized() # Towards the relay
+
+		# Zone 1: Player is stretching past max length (but under absolute max)
+		if current_distance > rope_max_length and current_distance <= (rope_max_length * 1.1):
+			# Calculate how far we have stretched past the target length (0.0 to 1.0)
+			var stretch_ratio = (current_distance - rope_max_length) / ((rope_max_length * 1.1) - rope_max_length)
+
+			# Check if the player is actively trying to move AWAY
+			if velocity.dot(pull_direction) < 0:
+				# Apply a progressive pulling force back toward the relay
+				velocity += pull_direction * rope_pull_force * stretch_ratio * delta
+
+		# Zone 2: Player has hit the absolute hard stop limit
+		elif current_distance > (rope_max_length * 1.1):
+			# 1. Snap player back to the maximum allowed edge boundary
+			global_position = current_connected_relay.global_position + (relay_to_player.normalized() * (rope_max_length * 1.1))
+
+			# 2. Kill outward velocity (Cancel out components moving away from the anchor)
+			var outward_velocity = velocity.dot(pull_direction)
+			if outward_velocity < 0:
+				# Subtract the velocity vector that is moving away
+				velocity -= pull_direction * outward_velocity
+	# ---------------------------------
+
 	# Sliding (low grav feeling)
 	velocity *= sliding
 	
@@ -151,21 +200,44 @@ func handle_movement(delta):
 	else:
 		new_ik_offset = ik_offset_amount
 	
+	# 1. TENTUKAN ARAH HADAP HORIZONTAL (current_facing)
 	if abs(velocity.x) > 1.0:
-		var new_facing = sign(velocity.x)
-		if new_facing != current_facing:
-			current_facing = new_facing
-		char_container.scale.x = current_facing
+		current_facing = sign(velocity.x)
 	
+	# Balik kontainer secara vertikal jika bergerak ke kiri agar tidak telentang
+	if current_facing == -1:
+		char_container.scale.y = -1
+	else:
+		char_container.scale.y = 1
+
+	# 2. HITUNG ROTASI BADAN
+	if velocity.length() > 0:
+		# Ambil sudut dasar dari pergerakan
+		var base_angle = velocity.angle()
+		
+		# Faktor kecepatan untuk efek menunduk (0.0 sampai 1.0)
+		var speed_factor = clamp(velocity.length() / max_swim_speed, 0.0, 1.0)
+		var max_lean_radian = deg_to_rad(max_lean_angle_deg)
+		
+		# Gabungkan sudut pergerakan dengan efek kemiringan berenang/menunduk
+		var lean_effect = max_lean_radian * speed_factor * current_facing
+		last_direction_angle = base_angle + lean_effect
+	
+	# Jalankan perputaran rotasi badan secara halus menuju target arah
+	rotation = rotate_toward(rotation, last_direction_angle, rotation_speed * delta)
+	
+	# 3. KENDALIKAN OFFSET UNTUK STRUKTUR IK ANGGOTA TUBUH (Kaki & Tangan)
 	var speed_ratio = velocity.length() / current_max_speed
 	var offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
-	var adjusted_offset = Vector2(offset.x * current_facing, offset.y)
+	var adjusted_offset = Vector2(offset.x * current_facing, offset.y * current_facing)
 	
+	# Transisi pergeseran kaki dan tangan mengikuti gerakan
 	leg_r_target.position = leg_r_target.position.move_toward(leg_r_base + adjusted_offset, 0.5)
 	leg_l_target.position = leg_l_target.position.move_toward(leg_l_base + adjusted_offset, 0.5)
 	arm_r_target.position = arm_r_target.position.move_toward(arm_r_base + adjusted_offset, 0.5)
 	arm_l_target.position = arm_l_target.position.move_toward(arm_l_base + adjusted_offset, 0.5)
-	
+
+
 	## Character orientation and animation
 	#var sprite = $AnimatedSprite2D
 	#if velocity.x > 5:
@@ -200,6 +272,40 @@ func handle_interact_hold(delta):
 			interact_hold_timer = 0.0
 	else:
 		interact_hold_timer = 0.0
+
+func handle_attachordetach_pipe(delta: float):
+	# JIKA PIPA SUDAH TERPASANG (Mekanik Detach/Melepas)
+	if current_connected_relay != null:
+		if Input.is_action_pressed("attach or detach"):
+			# Tambah timer selama tombol terus ditahan
+			rope_hold_timer += delta
+			
+			# OPSIONAL: Anda bisa memicu efek visual/UI bar loading di sini menggunakan (hold_timer / detach_hold_time)
+			print("Melepas pipa dalam: ", max(0.0, detach_hold_time - rope_hold_timer))
+			
+			# Jika durasi menahan sudah melewati batas, lepas pipa
+			if rope_hold_timer >= detach_hold_time:
+				current_connected_relay = null
+				in_oxygen = false
+				destroy_old_pipe()
+				rope_hold_timer = 0.0 # Reset timer setelah sukses melepas
+				print("Pipa Oksigen Berhasil Dilepas!")
+		else:
+			# Jika tombol dilepas sebelum waktunya, reset timer kembali ke 0
+			rope_hold_timer = 0.0
+
+	# JIKA PIPA BELUM TERPASANG (Mekanik Attach/Memasang)
+	else:
+		rope_hold_timer = 0.0 # Pastikan timer bersih
+		
+		# Menggunakan is_action_just_pressed agar langsung terpasang dalam sekali klik (tap)
+		if Input.is_action_just_pressed("attach or detach"):
+			# Pastikan ada relay terdekat yang aktif untuk disambungkan
+			if nearest_active_relay != null:
+				current_connected_relay = nearest_active_relay
+				in_oxygen = true
+				create_oxygen_rope()
+				print("Pipa Oksigen Berhasil Terpasang!")
 
 func find_nearest_interactable():
 	var closest = null
@@ -313,10 +419,12 @@ func handle_item():
 			spawn_dropped_item(item)
 
 func check_oxygen_relay_nearby(delta):
-	var in_oxygen = false
+	#var in_oxygen = false
 	nearest_relay = null
+	nearest_active_relay = null
 	var min_dist = INF
-	
+	var min_dist_active = INF
+
 	# Check all oxygen relays in the scene
 	for relay in get_tree().get_nodes_in_group("oxygen_nodes"):
 		# Check for nearest relay for the compass
@@ -328,8 +436,13 @@ func check_oxygen_relay_nearby(delta):
 			
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
-			in_oxygen = true
-			
+			#print("Player is in oxygen relay area!")
+			#in_oxygen = true
+			if dist < min_dist_active:
+				min_dist_active = dist
+				nearest_active_relay = relay
+				nearest_active_relay_distance = dist
+
 	if in_oxygen:
 		# Recharge oxygen
 		current_oxygen += 5.0 * delta
@@ -339,6 +452,68 @@ func check_oxygen_relay_nearby(delta):
 		
 	current_oxygen = clamp(current_oxygen, 0.0, max_oxygen)
 
+func connect_nearest_oxygen_relay():
+	# HANYA pindah koneksi otomatis JIKA player saat ini sudah terhubung ke suatu relay (tidak null)
+	# Ini berguna jika player berjalan dari Relay A langsung ke Relay B tanpa melepas pipa
+	if current_connected_relay != null and nearest_active_relay != current_connected_relay:
+		
+		# Jika ternyata player menjauh dari semua relay (nearest menjadi null), 
+		# biarkan fungsi detach dari tombol yang menangani, jangan diputus paksa di sini.
+		if nearest_active_relay != null:
+			current_connected_relay = nearest_active_relay
+
+			# Bersihkan pipa lama dan buat yang baru di relay terdekat yang baru
+			destroy_old_pipe()
+			create_oxygen_rope()
+
+func create_oxygen_rope():
+	# 1. Base Rope setup
+	var rope2d = Rope.new()
+	rope2d.name = "OxygenPipe"
+	rope2d.render_line = true
+	rope2d._set_length(rope_max_length)
+	rope2d.gravity = 0.0
+	rope2d.z_index = -1
+	rope2d.damping = 2.0
+	rope2d.num_constraint_iterations = 15
+	rope2d._set_num_segs(rope2d.rope_length / 10.0)
+	rope2d._points = [to_local(global_position), to_local(current_connected_relay.global_position)]
+	add_child(rope2d)
+	oxygen_pipe = rope2d
+
+	# 2. Start Handle: Make it a child of THIS player/object
+	handle_start = RopeHandle.new()
+	handle_start.name = "StartHandle"
+	add_child(handle_start) # Adding it here automatically positions it at our Vector2.ZERO center
+
+	# Point it to the rope and select the start position
+	handle_start.rope_path = rope2d.get_path()
+	handle_start.rope_position = 0.0
+
+	# 3. End Handle: Make it a child of the RELAY node
+	handle_end = RopeHandle.new()
+	handle_end.name = "EndHandle"
+	current_connected_relay.add_child(handle_end) # Adding it here positions it perfectly at the relay's center
+
+	# Point it to the rope and select the end position
+	handle_end.rope_path = rope2d.get_path()
+	handle_end.rope_position = 1.0
+
+func destroy_old_pipe():
+	# 1. ALWAYS free the handles first while the rope still exists!
+	if is_instance_valid(handle_start):
+		handle_start.queue_free()
+		handle_start = null
+
+	if is_instance_valid(handle_end):
+		handle_end.queue_free()
+		handle_end = null
+
+	# 2. Free the rope last, once nothing is attached to it anymore
+	if is_instance_valid(oxygen_pipe):
+		oxygen_pipe.queue_free()
+		oxygen_pipe = null
+
 func activate_sprint():
 	is_sprint_active = true
 	sprint_timer = sprint_duration
@@ -347,9 +522,9 @@ func activate_sprint():
 func handle_sprint(delta):
 	if not is_sprint_active:
 		return
-	
+
 	sprint_timer -= delta
-	
+
 	if sprint_timer <= 0:
 		is_sprint_active = false
 		sprint_timer = 0.0
@@ -363,9 +538,9 @@ func activate_scanner():
 func handle_scanner(delta):
 	if not is_scanner_active:
 		return
-	
+
 	scanner_timer -= delta
-	
+
 	if scanner_timer <= 0:
 		is_scanner_active = false
 		scanner_timer = 0.0
