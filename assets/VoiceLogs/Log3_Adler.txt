@@ -1,0 +1,6 @@
+Move 	  - WASD
+Boost 	  - Shift
+Brake	  - Space
+Interact  - E
+Logs 	  - R
+Drop Item - Q
