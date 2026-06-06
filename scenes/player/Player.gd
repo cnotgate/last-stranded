@@ -29,6 +29,9 @@ var in_oxygen: bool = false # Oxygen Related on Rope/Pipe
 @onready var head_target = $"Character Container/IK Targets/Head Target"
 @onready var char_container = $"Character Container"
 
+# Character Animation
+@onready var char_animation : AnimationPlayer = $"Character Container/AnimationPlayer"
+
 var leg_r_base: Vector2
 var leg_l_base: Vector2
 var arm_r_base: Vector2
@@ -86,6 +89,17 @@ func _ready():
 	print("Tier:", battery.tier)
 	print("Boost:", battery.boost_multiplier)
 	print("Drain:", battery.drain_rate)
+	
+	# Wait until all map and object ready
+	await get_tree().process_frame
+
+	# Connect to Oxygen Relay when start
+	check_oxygen_relay_nearby()
+	if nearest_active_relay != null:
+		current_connected_relay = nearest_active_relay
+		connect_nearest_oxygen_relay()
+	else:
+		print("Tidak ada oxygen relay yang terdeteksi.")
 
 func _physics_process(delta):
 	handle_movement(delta)
@@ -94,8 +108,8 @@ func _physics_process(delta):
 	handle_item()
 	handle_interact_hold(delta)
 	handle_attachordetach_pipe(delta)
-	check_oxygen_relay_nearby(delta)
-	#connect_nearest_oxygen_relay() // TIDAK DIBUTUHKAN LAGI
+	handle_oxygen_drain(delta)
+	check_oxygen_relay_nearby()
 	handle_sprint(delta)
 	handle_scanner(delta)
 
@@ -229,7 +243,7 @@ func handle_movement(delta):
 	# 3. KENDALIKAN OFFSET UNTUK STRUKTUR IK ANGGOTA TUBUH (Kaki & Tangan)
 	var speed_ratio = velocity.length() / current_max_speed
 	var offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
-	var adjusted_offset = Vector2(offset.x * current_facing, offset.y * current_facing)
+	var adjusted_offset = Vector2(offset.x * current_facing, offset.y)
 	
 	# Transisi pergeseran kaki dan tangan mengikuti gerakan
 	leg_r_target.position = leg_r_target.position.move_toward(leg_r_base + adjusted_offset, 0.5)
@@ -237,18 +251,6 @@ func handle_movement(delta):
 	arm_r_target.position = arm_r_target.position.move_toward(arm_r_base + adjusted_offset, 0.5)
 	arm_l_target.position = arm_l_target.position.move_toward(arm_l_base + adjusted_offset, 0.5)
 
-
-	## Character orientation and animation
-	#var sprite = $AnimatedSprite2D
-	#if velocity.x > 5:
-		#sprite.flip_h = false
-	#elif velocity.x < -5:
-		#sprite.flip_h = true
-		#
-	#if velocity.length() > 10:
-		#sprite.play("moving")
-	#else:
-		#sprite.play("idle")
 
 # Emit particles using godots particle system a great system for making particles
 func handle_effects():
@@ -275,10 +277,13 @@ func handle_interact_hold(delta):
 
 func handle_attachordetach_pipe(delta: float):
 	# JIKA PIPA SUDAH TERPASANG (Mekanik Detach/Melepas)
-	if current_connected_relay != null:
+	if oxygen_pipe != null:
 		if Input.is_action_pressed("attach or detach"):
 			# Tambah timer selama tombol terus ditahan
 			rope_hold_timer += delta
+			
+			# Play Animation
+			char_animation.play("detach")
 			
 			# OPSIONAL: Anda bisa memicu efek visual/UI bar loading di sini menggunakan (hold_timer / detach_hold_time)
 			print("Melepas pipa dalam: ", max(0.0, detach_hold_time - rope_hold_timer))
@@ -292,6 +297,7 @@ func handle_attachordetach_pipe(delta: float):
 				print("Pipa Oksigen Berhasil Dilepas!")
 		else:
 			# Jika tombol dilepas sebelum waktunya, reset timer kembali ke 0
+			char_animation.stop()
 			rope_hold_timer = 0.0
 
 	# JIKA PIPA BELUM TERPASANG (Mekanik Attach/Memasang)
@@ -304,6 +310,8 @@ func handle_attachordetach_pipe(delta: float):
 			if nearest_active_relay != null:
 				current_connected_relay = nearest_active_relay
 				in_oxygen = true
+				char_animation.play("pick")
+				await char_animation.animation_finished
 				create_oxygen_rope()
 				print("Pipa Oksigen Berhasil Terpasang!")
 
@@ -391,6 +399,8 @@ func handle_item():
 	if Input.is_action_just_pressed("interact"):
 		print("Interact pressed! Nearby object: ", nearby_object)
 		if nearby_object != null:
+			char_animation.play("pick")
+			await char_animation.animation_finished
 			nearby_object.interact(self)
 			# Debug helper
 			$Inventory.print_inventory()
@@ -418,8 +428,7 @@ func handle_item():
 		else:
 			spawn_dropped_item(item)
 
-func check_oxygen_relay_nearby(delta):
-	#var in_oxygen = false
+func check_oxygen_relay_nearby():
 	nearest_relay = null
 	nearest_active_relay = null
 	var min_dist = INF
@@ -437,12 +446,12 @@ func check_oxygen_relay_nearby(delta):
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
 			#print("Player is in oxygen relay area!")
-			#in_oxygen = true
 			if dist < min_dist_active:
 				min_dist_active = dist
 				nearest_active_relay = relay
 				nearest_active_relay_distance = dist
 
+func handle_oxygen_drain(delta):
 	if in_oxygen:
 		# Recharge oxygen
 		current_oxygen += 5.0 * delta

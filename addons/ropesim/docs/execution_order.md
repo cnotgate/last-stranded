@@ -5,7 +5,7 @@ Ropes are not processed by their node but in the `NativeRopeServer` class, which
 Roughly sketched, the order looks like this:
 
 1. `SceneTree.physics_frame`
-    - Rope update
+	- Rope update
 2. `_process()`
 3. `_physics_process()`
 

@@ -48,6 +48,8 @@ theme_override_fonts/font = ExtResource("3_4vh8y")
 theme_override_font_sizes/font_size = 35
 text = "Credits"
 underline = 2
+script = ExtResource("2_3h7gc")
+scene_to_file = "UI/Credit/Credit"
 
 [node name="ButtonClickedAudio" type="AudioStreamPlayer" parent="VBoxContainer/LinkButton2" unique_id=485577683]
 stream = ExtResource("7_kgeya")
@@ -71,5 +73,6 @@ autostart = true
 stream = ExtResource("6_5r3px")
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="VBoxContainer/StartButton" method="_on_pressed"]
+[connection signal="pressed" from="VBoxContainer/LinkButton2" to="VBoxContainer/LinkButton2" method="_on_pressed"]
 [connection signal="pressed" from="VBoxContainer/ExitButton" to="VBoxContainer/ExitButton" method="_on_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

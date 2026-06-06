@@ -1,0 +1,36 @@
+=========================================
+[b]LAST STRANDED[/b]
+=========================================
+
+- GAME CREATOR -
+Team STL (Semoga Tidak Lembur)
+
+- GAME ENGINE -
+Godot Game Engine
+(Godot Engine Authors)
+
+
+- THIRD-PARTY ADDONS -
+Soupik
+by ZedManul
+(Skeleton & RIK Character)
+
+GDNative-Ropesim
+by mphe
+(2D/3D Rope Simulation)
+
+- TYPOGRAPHY & ASSETS -
+Libre Bodoni Font
+by Impallari Type
+Based on ATF design by Morris Fuller Benton
+Licensed under the SIL Open Font License (OFL)
+
+- SPECIAL THANKS TO -
+Godot Community ID
+The Open Source Devs
+And YOU!
+
+
+=========================================
+[wave]THANK YOU FOR PLAYING![/wave]
+=========================================
