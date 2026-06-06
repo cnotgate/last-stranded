@@ -9,18 +9,21 @@ const LOGS_BUTTON = preload("res://scenes/UI/logs/LogsButton.tscn")
 
 var logs: Array[String] = [
 		"Log 1 - Captain Adler",
-		"Horizon Blackbox Recording",
+		"Horizon Blackbox Recording 1",
+		"Horizon Blackbox Recording 2",
 		"Log 2 - Captain Adler",
 		"Sanctuary Meeting Records",
-		"Charlie's Private Log",
-		"Log 3 - Captain Adler"
+		"Log 3 - Captain Adler",
+		"Final Log - Captain Adler"
 	]
 var file_paths: Array[String] = [
 		"res://assets/VoiceLogs/Log1_Adler.txt",
 		"res://assets/VoiceLogs/Horizon_Log.txt",
+		"res://assets/VoiceLogs/Horizon_Log2.txt",
 		"res://assets/VoiceLogs/Log2_Adler.txt",
 		"res://assets/VoiceLogs/Sanctuary_Log.txt",
-		"res://assets/VoiceLogs/Log3_Adler.txt"
+		"res://assets/VoiceLogs/Log3_Adler.txt",
+		"res://assets/VoiceLogs/Log4_Adler.txt"
 	]
 var buttons: Array[Button] = []
 
