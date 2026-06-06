@@ -28,7 +28,7 @@ rotation = -0.42010105
 scale = Vector2(3.810286, 3.810286)
 
 [node name="Player" parent="." unique_id=1962436338 instance=ExtResource("1_3l1dp")]
-position = Vector2(0, 23)
+position = Vector2(132, -28)
 
 [node name="Base" parent="." unique_id=1931406139 instance=ExtResource("10_7vje3")]
 

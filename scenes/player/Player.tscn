@@ -164,5 +164,5 @@ script = ExtResource("3_tn1bn")
 libraries/ = SubResource("AnimationLibrary_dvu4r")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=220253312]
-position = Vector2(6, -5)
+position = Vector2(0, -5)
 shape = SubResource("CapsuleShape2D_rmnoi")

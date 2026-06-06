@@ -29,6 +29,9 @@ var in_oxygen: bool = false # Oxygen Related on Rope/Pipe
 @onready var head_target = $"Character Container/IK Targets/Head Target"
 @onready var char_container = $"Character Container"
 
+# Character Animation
+@onready var char_animation : AnimationPlayer = $"Character Container/AnimationPlayer"
+
 var leg_r_base: Vector2
 var leg_l_base: Vector2
 var arm_r_base: Vector2
@@ -86,6 +89,17 @@ func _ready():
 	print("Tier:", battery.tier)
 	print("Boost:", battery.boost_multiplier)
 	print("Drain:", battery.drain_rate)
+	
+	# Wait until all map and object ready
+	await get_tree().process_frame
+	
+	# Connect to Oxygen Relay when start
+	check_oxygen_relay_nearby()
+	if nearest_active_relay != null:
+		current_connected_relay = nearest_active_relay
+		connect_nearest_oxygen_relay()
+	else:
+		print("Tidak ada oxygen relay yang terdeteksi.")
 
 func _physics_process(delta):
 	handle_movement(delta)
@@ -94,8 +108,8 @@ func _physics_process(delta):
 	handle_item()
 	handle_interact_hold(delta)
 	handle_attachordetach_pipe(delta)
-	check_oxygen_relay_nearby(delta)
-	#connect_nearest_oxygen_relay() // TIDAK DIBUTUHKAN LAGI
+	handle_oxygen_drain(delta)
+	check_oxygen_relay_nearby()
 	handle_sprint(delta)
 	handle_scanner(delta)
 
@@ -304,6 +318,8 @@ func handle_attachordetach_pipe(delta: float):
 			if nearest_active_relay != null:
 				current_connected_relay = nearest_active_relay
 				in_oxygen = true
+				char_animation.play("pick")
+				await char_animation.animation_finished
 				create_oxygen_rope()
 				print("Pipa Oksigen Berhasil Terpasang!")
 
@@ -391,6 +407,8 @@ func handle_item():
 	if Input.is_action_just_pressed("interact"):
 		print("Interact pressed! Nearby object: ", nearby_object)
 		if nearby_object != null:
+			char_animation.play("pick")
+			await char_animation.animation_finished
 			nearby_object.interact(self)
 			# Debug helper
 			$Inventory.print_inventory()
@@ -418,8 +436,7 @@ func handle_item():
 		else:
 			spawn_dropped_item(item)
 
-func check_oxygen_relay_nearby(delta):
-	#var in_oxygen = false
+func check_oxygen_relay_nearby():
 	nearest_relay = null
 	nearest_active_relay = null
 	var min_dist = INF
@@ -437,12 +454,12 @@ func check_oxygen_relay_nearby(delta):
 		# If the relay has oxygen and the player's body is inside its Area2D
 		if relay.has_oxygen and relay.overlaps_body(self):
 			#print("Player is in oxygen relay area!")
-			#in_oxygen = true
 			if dist < min_dist_active:
 				min_dist_active = dist
 				nearest_active_relay = relay
 				nearest_active_relay_distance = dist
 
+func handle_oxygen_drain(delta):
 	if in_oxygen:
 		# Recharge oxygen
 		current_oxygen += 5.0 * delta

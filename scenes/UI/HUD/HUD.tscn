@@ -185,7 +185,9 @@ Boost 	         - Shift
 Brake	          - Space
 Interact  	    - E
 Logs 	           	- R
-Drop Item  - Q"
+Drop Item  - Q
+Atch Pipe  - F
+Dtch Pipe  - Hold F"
 
 [node name="LogsMenu" parent="." unique_id=2104667939 instance=ExtResource("5_6pepf")]
 visible = false

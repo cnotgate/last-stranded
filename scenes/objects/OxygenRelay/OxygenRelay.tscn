@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bxnayma8a6vhv" path="res://assets/oxygenrelay/oxygenrelay.png" id="2_corod"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wd1cg"]
-radius = 1024.0
+radius = 111.82576
 
 [node name="OxygenRelay" type="Area2D" unique_id=1743183431]
 script = ExtResource("1_1ysro")
