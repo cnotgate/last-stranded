@@ -92,7 +92,7 @@ func _ready():
 	
 	# Wait until all map and object ready
 	await get_tree().process_frame
-	
+
 	# Connect to Oxygen Relay when start
 	check_oxygen_relay_nearby()
 	if nearest_active_relay != null:
@@ -243,7 +243,7 @@ func handle_movement(delta):
 	# 3. KENDALIKAN OFFSET UNTUK STRUKTUR IK ANGGOTA TUBUH (Kaki & Tangan)
 	var speed_ratio = velocity.length() / current_max_speed
 	var offset = velocity.normalized() * (-new_ik_offset * speed_ratio)
-	var adjusted_offset = Vector2(offset.x * current_facing, offset.y * current_facing)
+	var adjusted_offset = Vector2(offset.x * current_facing, offset.y)
 	
 	# Transisi pergeseran kaki dan tangan mengikuti gerakan
 	leg_r_target.position = leg_r_target.position.move_toward(leg_r_base + adjusted_offset, 0.5)
@@ -251,18 +251,6 @@ func handle_movement(delta):
 	arm_r_target.position = arm_r_target.position.move_toward(arm_r_base + adjusted_offset, 0.5)
 	arm_l_target.position = arm_l_target.position.move_toward(arm_l_base + adjusted_offset, 0.5)
 
-
-	## Character orientation and animation
-	#var sprite = $AnimatedSprite2D
-	#if velocity.x > 5:
-		#sprite.flip_h = false
-	#elif velocity.x < -5:
-		#sprite.flip_h = true
-		#
-	#if velocity.length() > 10:
-		#sprite.play("moving")
-	#else:
-		#sprite.play("idle")
 
 # Emit particles using godots particle system a great system for making particles
 func handle_effects():
@@ -289,10 +277,13 @@ func handle_interact_hold(delta):
 
 func handle_attachordetach_pipe(delta: float):
 	# JIKA PIPA SUDAH TERPASANG (Mekanik Detach/Melepas)
-	if current_connected_relay != null:
+	if oxygen_pipe != null:
 		if Input.is_action_pressed("attach or detach"):
 			# Tambah timer selama tombol terus ditahan
 			rope_hold_timer += delta
+			
+			# Play Animation
+			char_animation.play("detach")
 			
 			# OPSIONAL: Anda bisa memicu efek visual/UI bar loading di sini menggunakan (hold_timer / detach_hold_time)
 			print("Melepas pipa dalam: ", max(0.0, detach_hold_time - rope_hold_timer))
@@ -306,6 +297,7 @@ func handle_attachordetach_pipe(delta: float):
 				print("Pipa Oksigen Berhasil Dilepas!")
 		else:
 			# Jika tombol dilepas sebelum waktunya, reset timer kembali ke 0
+			char_animation.stop()
 			rope_hold_timer = 0.0
 
 	# JIKA PIPA BELUM TERPASANG (Mekanik Attach/Memasang)
