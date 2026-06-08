@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://bpecb3dm101bb"]
+
+[ext_resource type="PackedScene" uid="uid://cnja6ag0spi5t" path="res://scenes/player/Player.tscn" id="1_3l1dp"]
+[ext_resource type="Script" uid="uid://b8wni2t1w3g2w" path="res://scenes/world/World.gd" id="1_5cotu"]
+[ext_resource type="Script" uid="uid://cdk8vnb0w1q2o" path="res://scenes/world/StoryTrigger.gd" id="1_trigger"]
+[ext_resource type="Script" uid="uid://decr01p12np2h" path="res://scripts/data/LootTable.gd" id="2_n8dlr"]
+[ext_resource type="Resource" uid="uid://r4xau8ma7qi6" path="res://scripts/data/zone0_loot.tres" id="3_7vje3"]
+[ext_resource type="Resource" uid="uid://d1tnvtjfmq4x7" path="res://scripts/data/zone1_loot.tres" id="4_mkkyj"]
+[ext_resource type="Resource" uid="uid://bheodaasnhu6x" path="res://scripts/data/zone2_loot.tres" id="5_xm1px"]
+[ext_resource type="Resource" uid="uid://bi5l0rsga1nps" path="res://scripts/data/zone3_loot.tres" id="6_xmr2h"]
+[ext_resource type="Resource" uid="uid://hvqoegxdhu34" path="res://scripts/data/zone4_loot.tres" id="7_xh3pg"]
+[ext_resource type="Resource" uid="uid://c4vcae50h26mr" path="res://scripts/data/zone5_loot.tres" id="8_jltbn"]
+[ext_resource type="Texture2D" uid="uid://3ou32hpic26j" path="res://assets/background/starry-background.jpg" id="11_mkkyj"]
+[ext_resource type="PackedScene" uid="uid://chv4xgyc213tu" path="res://scenes/objects/OxygenRelay/OxygenRelay.tscn" id="13_xmr2h"]
+[ext_resource type="PackedScene" uid="uid://c8yia6agtsthb" path="res://scenes/UI/HUD/HUD.tscn" id="14_xh3pg"]
+[ext_resource type="Script" uid="uid://cuvmqi83u364r" path="res://scenes/world/AdlerLogTerminal.gd" id="22_adler_log"]
+[ext_resource type="Texture2D" uid="uid://c7edymgdevmnm" path="res://assets/broken_satellite.png" id="23_broken"]
+
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 100.0
+
+[node name="World" type="Node2D" unique_id=1799235330]
+script = ExtResource("1_5cotu")
+zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtResource("4_mkkyj"), ExtResource("5_xm1px"), ExtResource("6_xmr2h"), ExtResource("7_xh3pg"), ExtResource("8_jltbn")])
+
+[node name="SpaceStation" type="Sprite2D" parent="." unique_id=1189730882]
+z_index = -5
+position = Vector2(-300, 0)
+rotation = -0.42010105
+scale = Vector2(0.74338055, 0.74338055)
+texture = ExtResource("23_broken")
+
+[node name="Player" parent="." unique_id=1962436338 instance=ExtResource("1_3l1dp")]
+
+[node name="OxygenRelay" parent="." unique_id=1743183431 instance=ExtResource("13_xmr2h")]
+position = Vector2(150, 0)
+scale = Vector2(0.57608557, 0.57608557)
+is_source = true
+
+[node name="CanvasLayer" parent="." unique_id=340894874 instance=ExtResource("14_xh3pg")]
+treshold = 0.7
+
+
+
+[node name="Background" type="Parallax2D" parent="." unique_id=1301202719]
+z_index = -10
+scale = Vector2(0.12799676, 0.12799676)
+scroll_scale = Vector2(0.015, 0.015)
+repeat_size = Vector2(7001, 4001)
+repeat_times = 5
+
+[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=532915570]
+position = Vector2(3501, 1999)
+texture = ExtResource("11_mkkyj")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=317012611]
+color = Color(0.2, 0.2, 0.25, 1)
+
+[node name="AdlerLogTerminal" type="Area2D" parent="." unique_id=1487899642]
+position = Vector2(250, 0)
+script = ExtResource("22_adler_log")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AdlerLogTerminal" unique_id=510082590]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="Sprite2D" type="Sprite2D" parent="AdlerLogTerminal" unique_id=1044237814]
+scale = Vector2(0.5, 0.5)
+
+[node name="TriggerCeles" type="Area2D" parent="." unique_id=1495028652]
+position = Vector2(20000, 0)
+script = ExtResource("1_trigger")
+event_id = "act1_celes_intro"
+objective_to_set = "Reach Horizon"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerCeles" unique_id=344894864]
+shape = SubResource("CircleShape2D_trigger")

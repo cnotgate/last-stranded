@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cnja6ag0spi5t" path="res://scenes/player/Player.tscn" id="1_3l1dp"]
 [ext_resource type="Script" uid="uid://b8wni2t1w3g2w" path="res://scenes/world/World.gd" id="1_5cotu"]
+[ext_resource type="Script" uid="uid://cdk8vnb0w1q2o" path="res://scenes/world/StoryTrigger.gd" id="1_trigger"]
 [ext_resource type="Script" uid="uid://decr01p12np2h" path="res://scripts/data/LootTable.gd" id="2_n8dlr"]
 [ext_resource type="Resource" uid="uid://r4xau8ma7qi6" path="res://scripts/data/zone0_loot.tres" id="3_7vje3"]
 [ext_resource type="Resource" uid="uid://d1tnvtjfmq4x7" path="res://scripts/data/zone1_loot.tres" id="4_mkkyj"]
@@ -17,57 +18,213 @@
 [ext_resource type="PackedScene" path="res://scenes/items/SprintBatteryPickup.tscn" id="15_sprint"]
 [ext_resource type="PackedScene" path="res://scenes/items/OxygenCanisterPickup.tscn" id="16_oxygen"]
 [ext_resource type="PackedScene" path="res://scenes/items/ScannerPickup.tscn" id="17_scanner"]
+[ext_resource type="PackedScene" uid="uid://cxw407yv0v2v8" path="res://scenes/npc/Adler.tscn" id="18_adler"]
+[ext_resource type="Script" path="res://scenes/world/TutorialWindGate.gd" id="19_windgate"]
+[ext_resource type="PackedScene" path="res://scenes/items/DummyLoot3.tscn" id="20_loot3"]
+[ext_resource type="Script" path="res://scenes/world/DisasterManager.gd" id="21_disaster"]
+[ext_resource type="PackedScene" path="res://scenes/items/DummyLoot2.tscn" id="25_loot2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 100.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_v"]
+size = Vector2(100, 2000)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(8000, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gate"]
+size = Vector2(200, 1000)
 
 [node name="World" type="Node2D" unique_id=1799235330]
 script = ExtResource("1_5cotu")
 zone_loot_tables = Array[ExtResource("2_n8dlr")]([ExtResource("3_7vje3"), ExtResource("4_mkkyj"), ExtResource("5_xm1px"), ExtResource("6_xmr2h"), ExtResource("7_xh3pg"), ExtResource("8_jltbn")])
+is_tutorial_stage = true
 
 [node name="SpaceStation" parent="." unique_id=193361841 instance=ExtResource("9_xm1px")]
-position = Vector2(435, -472.00003)
+position = Vector2(-300, 0)
 rotation = -0.42010105
 scale = Vector2(3.810286, 3.810286)
 
 [node name="Player" parent="." unique_id=1962436338 instance=ExtResource("1_3l1dp")]
-position = Vector2(0, 23)
-
-[node name="Base" parent="." unique_id=1931406139 instance=ExtResource("10_7vje3")]
+position = Vector2(0, 0)
 
 [node name="OxygenRelay" parent="." unique_id=1743183431 instance=ExtResource("13_xmr2h")]
-position = Vector2(173, -34)
+position = Vector2(150, 0)
 scale = Vector2(0.57608557, 0.57608557)
 is_source = true
-max_tether_distance = 3000.0
-
-[node name="OxygenRelay2" parent="." unique_id=866412739 instance=ExtResource("13_xmr2h")]
-position = Vector2(919, 692)
-scale = Vector2(0.57608557, 0.57608557)
-max_tether_distance = 3000.0
-
-[node name="OxygenRelay3" parent="." unique_id=931597682 instance=ExtResource("13_xmr2h")]
-position = Vector2(1976.9999, 760)
-scale = Vector2(0.57608557, 0.57608557)
-max_tether_distance = 3000.0
-
-[node name="SprintBatteryTest" parent="." instance=ExtResource("15_sprint")]
-position = Vector2(-150, 23)
-
-[node name="OxygenCanisterTest" parent="." instance=ExtResource("16_oxygen")]
-position = Vector2(-150, 100)
-
-[node name="ScannerTest" parent="." instance=ExtResource("17_scanner")]
-position = Vector2(-150, -50)
 
 [node name="CanvasLayer" parent="." unique_id=340894874 instance=ExtResource("14_xh3pg")]
 treshold = 0.7
 
+[node name="Adler" parent="." unique_id=1880191236 instance=ExtResource("18_adler")]
+position = Vector2(50, -80)
+
+[node name="TriggerMovement" type="Area2D" parent="." unique_id=1555330350]
+position = Vector2(200, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_movement"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerMovement" unique_id=2062442818]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="TriggerFlashlight" type="Area2D" parent="."]
+position = Vector2(450, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_flashlight"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerFlashlight"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="TriggerOxygen" type="Area2D" parent="." unique_id=1352462656]
+position = Vector2(700, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_oxygen"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerOxygen" unique_id=1302443442]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="TriggerUmbilical" type="Area2D" parent="." unique_id=1494415235]
+position = Vector2(1000, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_umbilical"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerUmbilical" unique_id=963508498]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="OxygenRelayTraining" parent="." unique_id=1234567890 instance=ExtResource("13_xmr2h")]
+position = Vector2(1200, 0)
+scale = Vector2(0.57608557, 0.57608557)
+
+[node name="TriggerDisconnect" type="Area2D" parent="."]
+position = Vector2(1500, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_disconnect"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerDisconnect"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="GateDisconnect" type="Area2D" parent="."]
+position = Vector2(1700, 0)
+script = ExtResource("19_windgate")
+required_condition = "disconnect"
+reminder_event_id = "reminder_disconnect"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GateDisconnect"]
+shape = SubResource("RectangleShape2D_gate")
+
+[node name="TriggerInventory" type="Area2D" parent="."]
+position = Vector2(2000, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_inventory"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerInventory"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="BatteryMatLoot" parent="." instance=ExtResource("25_loot2")]
+position = Vector2(2000, 50)
+
+[node name="TriggerSprint" type="Area2D" parent="."]
+position = Vector2(2300, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_sprint"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerSprint"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="SprintPickupTutorial" parent="." instance=ExtResource("15_sprint")]
+position = Vector2(2300, 50)
+
+[node name="TriggerScanning" type="Area2D" parent="."]
+position = Vector2(2800, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_scanning"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerScanning"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="TriggerCrafting" type="Area2D" parent="."]
+position = Vector2(3300, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_crafting"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerCrafting"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="TriggerDeployment" type="Area2D" parent="."]
+position = Vector2(3800, 0)
+script = ExtResource("1_trigger")
+event_id = "tutorial_deployment"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TriggerDeployment"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="Boundaries" type="StaticBody2D" parent="."]
+
+[node name="LeftWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(-200, 0)
+shape = SubResource("RectangleShape2D_wall_v")
+
+[node name="TopWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(3000, -150)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="BottomWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(3000, 150)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="GateUmbilical" type="Area2D" parent="."]
+position = Vector2(1300, 0)
+script = ExtResource("19_windgate")
+required_condition = "umbilical"
+reminder_event_id = "reminder_umbilical"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GateUmbilical"]
+shape = SubResource("RectangleShape2D_gate")
+
+[node name="GateScanning" type="Area2D" parent="."]
+position = Vector2(3100, 0)
+script = ExtResource("19_windgate")
+required_condition = "scanning"
+reminder_event_id = "reminder_scanning"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GateScanning"]
+shape = SubResource("RectangleShape2D_gate")
+
+[node name="GateCrafting" type="Area2D" parent="."]
+position = Vector2(2300, 0)
+script = ExtResource("19_windgate")
+required_condition = "crafting"
+reminder_event_id = "reminder_crafting"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GateCrafting"]
+shape = SubResource("RectangleShape2D_gate")
+
 [node name="Background" type="Parallax2D" parent="." unique_id=1301202719]
-z_index = -1
+z_index = -10
 scale = Vector2(0.12799676, 0.12799676)
 scroll_scale = Vector2(0.015, 0.015)
 repeat_size = Vector2(7001, 4001)
-repeat_times = 37
+repeat_times = 5
 
-[node name="TextureRect" type="TextureRect" parent="Background" unique_id=519096962]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Sprite2D" type="Sprite2D" parent="Background" unique_id=532915570]
+position = Vector2(3501, 1999)
 texture = ExtResource("11_mkkyj")
+
+[node name="TutorialLoot1" parent="." instance=ExtResource("20_loot3")]
+position = Vector2(1900, -50)
+
+[node name="TutorialLoot2" parent="." instance=ExtResource("20_loot3")]
+position = Vector2(1900, 0)
+
+[node name="TutorialLoot3" parent="." instance=ExtResource("20_loot3")]
+position = Vector2(1900, 50)
+
+[node name="TutorialLoot4" parent="." instance=ExtResource("20_loot3")]
+position = Vector2(1900, -100)
+
+[node name="TutorialLoot5" parent="." instance=ExtResource("20_loot3")]
+position = Vector2(1900, 100)
+
+[node name="DisasterManager" type="Node2D" parent="."]
+script = ExtResource("21_disaster")

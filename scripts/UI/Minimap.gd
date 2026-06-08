@@ -53,6 +53,21 @@ func _draw():
 			draw_circle(rel_pos, 5.0, Color(color.r, color.g, color.b, 0.25))
 			# Core dot
 			draw_circle(rel_pos, 3.0, color)
+			
+	# Draw resource items
+	for node in get_tree().get_nodes_in_group("interactable"):
+		if node is ResourceItem and is_instance_valid(node):
+			var rel_pos = (node.global_position - player.global_position) * scale_factor + center
+			if _is_in_bounds(rel_pos):
+				var item_color = Color(1.0, 1.0, 1.0, 0.8)
+				if node.data != null:
+					match node.data.item_name:
+						"hybrid mat": item_color = Color(1.0, 0.6, 0.0, 0.9) # Orange
+						"battery mat": item_color = Color(0.2, 1.0, 0.2, 0.9) # Green
+						"oxygen mat": item_color = Color(0.6, 0.2, 1.0, 0.9) # Purple
+						
+				draw_circle(rel_pos, 4.0, Color(item_color.r, item_color.g, item_color.b, 0.3))
+				draw_circle(rel_pos, 2.5, item_color)
 	
 	# Draw player at center (white with glow)
 	draw_circle(center, 5.0, Color(1, 1, 1, 0.15))

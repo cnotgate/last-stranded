@@ -4,6 +4,7 @@
 
 [node name="SpaceStation" type="StaticBody2D" unique_id=910552385]
 position = Vector2(-7, -3)
+z_index = -5
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1890805830]
 texture = ExtResource("1_ep8tx")

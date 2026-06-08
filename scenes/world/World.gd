@@ -8,6 +8,7 @@ const WORLD_RADIUS = 6 * UNITS_PER_KM
 @export var zone_loot_tables: Array[LootTable]
 @export var zone_chest_tables: Array[LootTable]
 @export var zone_enemy_tables: Array[LootTable]
+@export var is_tutorial_stage: bool = false
 
 var debug_timer := 0.0
 var zone_spawn_data := {}
@@ -206,8 +207,9 @@ func generate_powerups():
 		print("Spawned Scanner in zone", zone)
 
 func _ready():
-	generate_resources()
-	generate_powerups()
-	print_spawn_summary()
-	# generate_chests()
-	# generate_enemies()
+	if not is_tutorial_stage:
+		generate_resources()
+		generate_powerups()
+		print_spawn_summary()
+		# generate_chests()
+		# generate_enemies()

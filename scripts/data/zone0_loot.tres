@@ -1,11 +1,12 @@
 [gd_resource type="Resource" script_class="LootTable" format=3 uid="uid://r4xau8ma7qi6"]
 
+[ext_resource type="PackedScene" uid="uid://bowdc8oo8k228" path="res://scenes/items/DummyLoot2.tscn" id="1_batt"]
 [ext_resource type="PackedScene" uid="uid://cmdvnyyk1qret" path="res://scenes/items/DummyLoot3.tscn" id="1_3m8ig"]
 [ext_resource type="Script" uid="uid://decr01p12np2h" path="res://scripts/data/LootTable.gd" id="1_3yevo"]
 
 [resource]
 script = ExtResource("1_3yevo")
-items = Array[PackedScene]([ExtResource("1_3m8ig")])
+items = Array[PackedScene]([ExtResource("1_batt"), ExtResource("1_3m8ig")])
 guaranteed_items = Array[PackedScene]([ExtResource("1_3m8ig")])
 guaranteed_count = 5
 metadata/_custom_type_script = "uid://decr01p12np2h"

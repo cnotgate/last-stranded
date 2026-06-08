@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://cmdvnyyk1qret"]
 
 [ext_resource type="Script" uid="uid://cfg2ffx4f6i8h" path="res://scenes/items/ResourceItem.gd" id="1_1brnh"]
-[ext_resource type="Texture2D" uid="uid://upkf7woi4wd2" path="res://assets/dummyitem3.png" id="1_red0c"]
+[ext_resource type="Texture2D" uid="uid://beo4vf310sq0g" path="res://assets/crafting_material.png" id="1_red0c"]
 [ext_resource type="Resource" uid="uid://bmes41qr8r1or" path="res://scripts/data/dummyloot3.tres" id="2_8mav0"]
 
 [node name="DummyLoot3" type="Node2D" unique_id=1815977240]
-scale = Vector2(2, 2)
 script = ExtResource("1_1brnh")
 data = ExtResource("2_8mav0")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1262893175]
+scale = Vector2(0.1, 0.1)
 texture = ExtResource("1_red0c")
